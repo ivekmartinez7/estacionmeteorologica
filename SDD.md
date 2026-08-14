@@ -2,7 +2,7 @@
 ## Documento de Diseño de Software: Estación Meteorológica Digital Multi-Agente (*IvekBot Weather Station*)
 
 - **Document ID:** SDD-IVEKBOT-WX-2026-V1
-- **Versión:** 1.0.0 (Release Productivo)
+- **Versión:** 1.1.0 (Provider-Agnostic LLM Gateway Edition)
 - **Fecha:** 2026-08-14
 - **Estándar:** IEEE 1016-2009 (Software Design Descriptions), FastMCP, Pydantic v2, TimescaleDB, Docker
 - **Ubicación Geográfica de Referencia:** Xalapa, Veracruz, México ($19.54^\circ\text{N},\, 96.92^\circ\text{W}$, Altitud: $1,420\,\text{msnm}$)
@@ -18,10 +18,12 @@ Diseñar y construir un ecosistema meteorológico digital autónomo, de alta dis
 1. **Separación Estricta entre Lógica Determinista y Razonamiento Cognitivo:**
    - Todo cálculo matemático, termodinámico y de extrapolación de sensores se ejecuta en Python puro / C++ sin intervención de LLMs, garantizando **cero alucinaciones** y **coste $0$ de tokens** en la operación continua baseline.
    - Los Modelos de Lenguaje (LLMs) se activan de forma quirúrgica únicamente para interpretar escenarios complejos, evaluar riesgos por cuenca, consultar el grafo de conocimiento y redactar boletines de Protección Civil.
-2. **Eficiencia Extrema de Tokens (GraphRAG con Graphify):**
+2. **Pasarela de LLMs Agnóstica al Proveedor (*Provider-Agnostic LLM Gateway*):**
+   - El sistema no ata al usuario a ningún modelo propietario específico. Soporta cualquier proveedor comercial mediante API key (OpenAI, Anthropic, Google Gemini, DeepSeek, Groq, OpenRouter, Mistral), servicios de planes por tokens, o servidores de inferencia locales (Ollama, vLLM, LM Studio) usando el estándar OpenAI-Compatible API (`/v1/chat/completions`).
+3. **Eficiencia Extrema de Tokens (GraphRAG con Graphify):**
    - La base de conocimiento sobre el código, reglas sinópticas y manuales de Protección Civil se indexa en un grafo con comunidades de Louvain, permitiendo consultas contextuales con un presupuesto estricto (`--budget 1500`).
-3. **Resiliencia Operativa y Degradación Elegante (*Graceful Degradation*):**
-   - Si la conexión a internet cae, el nodo IoT almacena lecturas en flash y el servidor continúa computando tendencias locales sin detenerse.
+4. **Resiliencia Operativa y Degradación Elegante (*Graceful Degradation*):**
+   - Si no se configura ninguna API key de LLM o se agotan los tokens, el sistema conmuta automáticamente a sus motores deterministas basados en plantillas físicas sin interrumpir la operación ni el Dashboard.
 
 ---
 
@@ -33,8 +35,8 @@ Diseñar y construir un ecosistema meteorológico digital autónomo, de alta dis
 +---------------------------------------------------------------------------------------------------------------+
 | FASE              | ACTORES / HERRAMIENTAS              | RESPONSABILIDAD TÉCNICA                             |
 +-------------------+-------------------------------------+-----------------------------------------------------+
-| DESARROLLO        | Desarrollador + DeepSeek-V3 /       | Construcción de código, definición de esquemas,     |
-| (Build-Time)      | Qwen-2.5-Coder-32B                  | entrenamiento de modelos ML y compilación Graphify. |
+| DESARROLLO        | Desarrollador + LLM de su elección  | Construcción de código, definición de esquemas,     |
+| (Build-Time)      | (vía API o Local)                   | entrenamiento de modelos ML y compilación Graphify. |
 +-------------------+-------------------------------------+-----------------------------------------------------+
 | OPERACIÓN         | Orquestador Master + 6 Subagentes   | Ingesta 1 Hz por MQTT, física MetPy, pysteps radar, |
 | (Runtime 24/7)    | + FastAPI + TimescaleDB + WebSockets| difusión WebSocket y emisión de alertas ciudadanas. |
@@ -61,8 +63,9 @@ flowchart TD
         SA4["SA4: Super-Ensemble & Downscaling (LightGBM)"]
     end
 
-    subgraph COGNITIVO["4. Capa Cognitiva & FastMCP (LLMs Quirúrgicos)"]
-        ORQ["Orquestador Master / Router (DeepSeek-R1 / Gemini 1.5 Pro)"]
+    subgraph COGNITIVO["4. Capa Cognitiva, FastMCP & LLM Gateway"]
+        ORQ["Orquestador Master / Router (Plan-and-Execute)"]
+        LLM_GW["LLM Gateway (OpenAI / OpenRouter / DeepSeek / Ollama / vLLM)"]
         SA5["SA5: Verificación, CRPS & Calibración Closed-Loop"]
         SA6["SA6: Análisis de Riesgo Hidrológico & Difusión"]
         KG[("Graphify GraphRAG (graph.json / Comunidades Louvain)")]
@@ -90,6 +93,7 @@ flowchart TD
     SA3 --> ORQ
     SA4 --> ORQ
 
+    ORQ <--> LLM_GW
     ORQ <--> KG
     ORQ <--> SA5
     ORQ --> SA6
@@ -104,175 +108,128 @@ flowchart TD
 
 ---
 
-## 3. Especificación de los Subagentes del Sistema
+## 3. Configuración de Modelos y Pasarela LLM (*Provider-Agnostic Gateway*)
+
+El sistema utiliza un adaptador universal de endpoints compatibles con OpenAI (`/v1/chat/completions`) que permite al usuario configurar cualquier proveedor o plan por tokens:
+
+```
++---------------------------------------------------------------------------------------------------------------+
+| PROVEEDOR / SERVICIO        | EJEMPLO BASE URL                                | EJEMPLO MODELO RECOMENDADO    |
++-----------------------------+-------------------------------------------------+-------------------------------+
+| OpenAI                      | https://api.openai.com/v1                       | gpt-4o, gpt-4o-mini           |
+| OpenRouter (Multi-Provider) | https://openrouter.ai/api/v1                    | deepseek/deepseek-r1, qwen-72b|
+| DeepSeek API                | https://api.deepseek.com/v1                     | deepseek-chat, deepseek-reasoner|
+| Groq (Ultra-Fast)           | https://api.groq.com/openai/v1                  | llama-3.3-70b-versatile       |
+| Inferencia Local (Ollama)   | http://localhost:11434/v1                       | qwen2.5:72b, deepseek-r1:14b  |
+| Inferencia Local (vLLM)     | http://localhost:8000/v1                        | custom-finetuned-weather      |
++---------------------------------------------------------------------------------------------------------------+
+```
+
+### Variables de Entorno de Configuración (`.env`):
+```bash
+# Gateway y Autenticación
+LLM_PROVIDER=openai                       # Nombre identificador del proveedor
+LLM_BASE_URL=https://api.openai.com/v1    # Endpoint compatible con chat/completions
+LLM_API_KEY=tu_api_key_aqui               # Token de autenticación o plan de tokens
+
+# Modelos Asignados por Rol
+ORCHESTRATOR_MODEL=gpt-4o-mini            # Modelo para razonamiento y enrutamiento
+ORCHESTRATOR_MAX_TOKENS=2000              # Límite estricto de gasto de tokens
+ORCHESTRATOR_TEMPERATURE=0.2
+
+RISK_AGENT_MODEL=gpt-4o-mini              # Modelo para redacción de boletines y alertas
+RISK_AGENT_MAX_TOKENS=1000
+RISK_AGENT_TEMPERATURE=0.4
+```
+
+---
+
+## 4. Especificación de los Subagentes del Sistema
 
 ```
 +-------------------------------------------------------------------------------------------------------------------+
-| ID  | SUBAGENTE                     | TIPO DE PROCESO      | MODELO / MOTOR        | CONSUMO TOKENS               |
+| ID  | SUBAGENTE                     | TIPO DE PROCESO      | MOTOR / HERRAMIENTAS  | CONSUMO TOKENS               |
 +-----+-------------------------------+----------------------+-----------------------+------------------------------+
-| ORQ | Orquestador Master / Router   | Cognitivo (CoT)      | DeepSeek-R1 / Gemini  | Variable (Solo bajo demanda) |
+| ORQ | Orquestador Master / Router   | Cognitivo (CoT)      | LLM Gateway (Usuario) | Variable (Solo bajo demanda) |
 | SA1 | Ingesta, QC & Asimilación     | Determinista Puro    | Python / Kalman AKF   | 0 Tokens (100% Determinista) |
 | SA2 | Motor Termodinámico           | Físico Determinista  | MetPy / SciPy         | 0 Tokens (100% Determinista) |
 | SA3 | Nowcasting Radar & Satélite   | Visión / Flujo Óptico| pysteps / Lucas-Kanade| 0 Tokens (100% Determinista) |
 | SA4 | Super-Ensemble & Downscaling  | Machine Learning     | LightGBM / Cuantiles  | 0 Tokens (100% Determinista) |
 | SA5 | Verificación & Closed-Loop    | Estadístico          | SQL / TimescaleDB     | 0 Tokens (100% Determinista) |
-| SA6 | Riesgo por Cuenca & Difusión  | Cognitivo / Síntesis | Qwen-2.5-72B / DSeek  | Bajo (< 800 tokens por aviso)|
+| SA6 | Riesgo por Cuenca & Difusión  | Cognitivo / Síntesis | LLM Gateway (Usuario) | Bajo (< 500 tokens por aviso)|
 | KG  | Grafo de Conocimiento         | GraphRAG Estructurado| Graphify CLI          | Fijo (--budget 1500)         |
 +-------------------------------------------------------------------------------------------------------------------+
 ```
 
 ---
 
-### 3.1. Orquestador Master (`MasterOrchestrator`)
-- **Responsabilidad:** Centro neurálgico del sistema. Recibe triggers (cron cada 5 min, WebSockets o eventos de sensor) y orquesta el flujo de llamadas a herramientas FastMCP.
-- **Patrón:** *Plan-and-Execute* con validación de esquemas Pydantic v2.
-- **Manejo de Fallbacks:** Si un sensor físico pierde conexión, conmuta a estimación por satélite/ERA5 con bandera de advertencia.
+### 4.1. Orquestador Master (`MasterOrchestrator`)
+- **Responsabilidad:** Centro neurálgico del sistema. Coordina la ejecución de herramientas FastMCP, evalúa la intención del usuario y gestiona contingencias si una API externa degrada.
 
----
-
-### 3.2. Subagente 1: Ingesta, QC & Asimilación (`DataIngestionAgent`)
-- **Control de Calidad (QC):** Filtro *Modified Z-Score* sobre ventana de 15 minutos:
-  $$M_i = \frac{0.6745 \cdot (x_i - \tilde{x})}{\text{MAD}}$$
-  Rechaza lecturas si $|M_i| > 3.5$ (eliminación de falsos picos térmicos o eléctricos).
+### 4.2. Subagente 1: Ingesta, QC & Asimilación (`DataIngestionAgent`)
+- **Filtro Modified Z-Score:** Rechazo de anomalías y ruido de sensores físicos ($|M_i| > 3.5$).
 - **Filtro de Kalman Adaptativo (AKF):**
-  Corrige la deriva de la estación física $z_k$ en función de la covarianza del error de medición $R_k$ y de proceso $Q_k$:
   $$\hat{x}_{k|k} = \hat{x}_{k|k-1} + K_k (z_k - H \hat{x}_{k|k-1})$$
-  $$K_k = P_{k|k-1} H^T (H P_{k|k-1} H^T + R_k)^{-1}$$
+
+### 4.3. Subagente 2: Motor Termodinámico (`ThermoPhysicsAgent`)
+- **Cálculo Determinista con `MetPy`:** Punto de rocío ($T_d$), Nivel $LCL$, $CAPE$ (J/kg), $CIN$ (J/kg) y Agua Precipitable $PWAT$ (mm).
+- **Detección de "Norte" (Frente Frío):** $\Delta P_{3\text{h}} \ge +2.5\,\text{hPa} \land \text{Dir}_{\text{viento}} \in [300^\circ, 360^\circ] \land \text{Racha} \ge 50\,\text{km/h} \land \Delta T_{3\text{h}} \le -4.0\,^\circ\text{C}$.
+
+### 4.4. Subagente 3: Nowcasting Radar & Satélite (`NowcastAgent`)
+- **Flujo Óptico semilagrangiano de Lucas-Kanade (`pysteps`):** Proyección de reflectividad radar a 0-120 minutos e ingesta GOES-16 Banda 13 IR + GLM.
+
+### 4.5. Subagente 4: Super-Ensemble & Downscaling ML (`MLEnsembleAgent`)
+- **Ensamble Multi-Modelo:** Fusión de `ECMWF`, `GFS`, `ICON`, `HRRR`.
+- **Regresión por Cuantiles con LightGBM:** Estimación de probabilidad orográfica ($p_{10}, p_{50}, p_{90}$) para la cuenca de Xalapa.
+
+### 4.6. Subagente 5: Verificación & Closed-Loop (`FeedbackCalibrationAgent`)
+- **Métricas:** $MAE$, $RMSE$, $CRPS$, $CSI$ (Threat Score).
+- **Autocalibración:** Actualización de pesos del ensamble en base de datos mediante Exponential Moving Average (EMA).
+
+### 4.7. Subagente 6: Riesgo Hidrológico & Difusión (`RiskSocialAgent`)
+- **Monitoreo de Cuencas:** Río Actopan, Río La Antigua, Río Sordo.
+- **Semáforo de 4 Niveles:** 🟢 Verde, 🟡 Amarillo, 🟠 Naranja, 🔴 Rojo.
+- **Formateador Multicanal:** Generación de boletines con emojis para WhatsApp, Telegram y X vía el LLM configurado.
 
 ---
 
-### 3.3. Subagente 2: Motor Termodinámico (`ThermoPhysicsAgent`)
-- **Librería Central:** `MetPy` con manejo de unidades dimensionales estrictas.
-- **Fórmulas Principales:**
-  - **Punto de Rocío ($T_d$):**
-    $$T_d = \frac{237.7 \cdot \alpha}{17.27 - \alpha}, \quad \text{donde } \alpha = \frac{17.27 \cdot T}{237.7 + T} + \ln\left(\frac{RH}{100}\right)$$
-  - **Nivel de Condensación por Elevación ($LCL$):**
-    Presión barométrica donde una parcela se satura adiabáticamente.
-  - **Energía Convectiva ($CAPE$) e Inhibición ($CIN$):**
-    $$CAPE = \int_{z_{LFC}}^{z_{EL}} g \left( \frac{T_{v,\text{parcela}} - T_{v,\text{entorno}}}{T_{v,\text{entorno}}} \right) dz$$
-    $$CIN = \int_{z_{\text{superficie}}}^{z_{LFC}} g \left( \frac{T_{v,\text{parcela}} - T_{v,\text{entorno}}}{T_{v,\text{entorno}}} \right) dz$$
-  - **Detección de "Norte" (Frente Frío Polar):**
-    Disparo de bandera activa si:
-    $$\Delta P_{3\text{h}} \ge +2.5\,\text{hPa} \quad \land \quad 300^\circ \le \text{Dir}_{\text{viento}} \le 360^\circ \quad \land \quad \text{Racha} \ge 50\,\text{km/h} \quad \land \quad \Delta T_{3\text{h}} \le -4.0\,^\circ\text{C}$$
+## 5. Capa Transversal: Grafo de Conocimiento Graphify (GraphRAG)
+
+- **Indexación:** Grafo de conocimiento estructurado en `graphify-out/graph.json` con comunidades de Louvain.
+- **Herramientas FastMCP:**
+  ```python
+  graphify_query(question: str, budget_tokens: int = 1500) -> str
+  graphify_find_path(concept_a: str, concept_b: str) -> str
+  graphify_explain_node(node_id: str) -> str
+  ```
 
 ---
 
-### 3.4. Subagente 3: Nowcasting Radar & Satélite (`NowcastAgent`)
-- **Algoritmo:** Flujo óptico semilagrangiano de *Lucas-Kanade* implementado en `pysteps`.
-- **Rango Operativo:** Proyección de reflectividad radar ($dBZ$) de 0 a 120 minutos en intervalos de 5 min.
-- **Entrada Satelital:** GOES-16 Banda 13 ($10.3\,\mu\text{m}$) para seguimiento de cimas de nubes convectivas frías ($<-50\,^\circ\text{C}$) y pulsos de rayos GLM.
+## 6. Diseño de Interfaz y Dashboard en Tiempo Real
+
+- **Streaming WebSockets:** `/ws/telemetry/live` a $1\,\text{Hz}$.
+- **Componentes:**
+  - 5 Tarjetas métricas en vivo.
+  - Gráfica de series de tiempo 24h interactiva con Apache ECharts.
+  - Gauge de convección $CAPE$ ($0 - 3,500\,\text{J/kg}$).
+  - Abanico de cuantiles probabilísticos a 14 días ($p_{10}, p_{50}, p_{90}$).
+  - Visor de alertas de Protección Civil y caja de consulta Graphify GraphRAG.
 
 ---
 
-### 3.5. Subagente 4: Super-Ensemble & Downscaling ML (`MLEnsembleAgent`)
-- **Modelos Integrados:** `ECMWF IFS/AIFS`, `NOAA GFS`, `DWD ICON`, `NCEP HRRR`.
-- **Downscaling Estadístico con LightGBM:**
-  - Modelo de regresión por cuantiles para lluvia a 14 días ($p_{10}, p_{50}, p_{90}$) entrenado con reanálisis ERA5 de 30 años ajustado a la altitud real de Xalapa ($1,420\,\text{msnm}$).
+## 7. Diseño de Hardware IoT y Firmware ESP32
+
+- **Microcontrolador:** ESP32-WROOM-32 (Dual Core 240MHz).
+- **Sensores:** BME280 (I2C), Pluviómetro de balancín (GPIO 4), Anemómetro (GPIO 5), Divisor de voltaje batería (GPIO 34).
+- **Protocolo:** MQTT con calidad de servicio **QoS 1** y reconexión automática.
 
 ---
 
-### 3.6. Subagente 5: Verificación & Closed-Loop (`FeedbackCalibrationAgent`)
-- **Frecuencia:** Ejecución cada 24 horas para comparar pronósticos emitidos vs. observaciones reales de la estación física.
-- **Métricas de Rendimiento:**
-  - $MAE = \frac{1}{n} \sum |Y_t - \hat{Y}_t|$
-  - $RMSE = \sqrt{\frac{1}{n} \sum (Y_t - \hat{Y}_t)^2}$
-  - $CRPS(F, y) = \int_{-\infty}^\infty \left[ F(x) - \mathbf{1}(x \ge y) \right]^2 dx$
-  - $CSI = \frac{\text{Aciertos}}{\text{Aciertos} + \text{Fallos} + \text{Falsas Alarmas}}$
-- **Autocalibración:** Actualización de pesos del ensamble mediante Media Móvil Exponencial (EMA) del inverso del CRPS.
-
----
-
-### 3.7. Subagente 6: Análisis de Riesgo Hidrológico & Difusión (`RiskSocialAgent`)
-- **Monitoreo de Cuencas:**
-  - Cuenca Río Actopan, Cuenca Río La Antigua, Cuenca Río Sordo.
-- **Matriz de Alerta:**
-  - 🟢 **VERDE:** Precipitación acumulada $<10\,\text{mm}$, viento normal.
-  - 🟡 **AMARILLO:** Lluvia $10-30\,\text{mm}$, niebla densa ($LCL < 1,450\,\text{msnm}$).
-  - 🟠 **NARANJA:** Lluvia $>45\,\text{mm}/3\text{h}$, rachas $>55\,\text{km/h}$ o Frente Frío severo.
-  - 🔴 **ROJO:** Lluvia acumulada $>100\,\text{mm}/24\text{h}$ o riesgo de desbordamiento/deslave.
-- **Formateador Multicanal:** Generación de avisos estructurados con emojis para WhatsApp, Telegram y X.
-
----
-
-## 4. Capa Transversal: Grafo de Conocimiento Graphify (GraphRAG)
-
-### 4.1. Estructura y Detección de Comunidades
-Graphify indexa el repositorio en `graphify-out/graph.json` particionando el conocimiento mediante el algoritmo **Louvain/Leiden**:
-- **Comunidad 0 (Física & Modelado):** `physics_engine.py`, fórmulas de MetPy, índices $CAPE/CIN$, umbrales de Frente Frío.
-- **Comunidad 1 (Ingesta & Protocolos IoT):** `esp32_sensor_node.py`, MQTT, filtros de ruido, esquemas Pydantic.
-- **Comunidad 2 (Orquestación & FastMCP):** `orchestrator.py`, `mcp_server.py`, endpoints FastAPI, WebSockets.
-- **Comunidad 3 (Protección Civil & Cuencas):** Reglas operativas de ríos Actopan/La Antigua, protocolos de evacuación.
-
-### 4.2. Herramientas MCP Expuestas
-```python
-graphify_query(question: str, budget_tokens: int = 1500) -> str
-graphify_find_path(concept_a: str, concept_b: str) -> str
-graphify_explain_node(node_id: str) -> str
-```
-
----
-
-## 5. Diseño de Interfaz y Dashboard en Tiempo Real
-
-### 5.1. Protocolo WebSockets (`/ws/telemetry/live`)
-- **Latencia:** Sub-segundo ($1\,\text{Hz}$).
-- **Estructura del Paquete JSON:**
-```json
-{
-  "type": "telemetry_pulse",
-  "telemetry": {
-    "temperature_c": 24.5,
-    "humidity_pct": 84.0,
-    "pressure_hpa": 861.2,
-    "rain_rate_mmh": 1.2,
-    "rain_accum_24h_mm": 14.5,
-    "wind_speed_kmh": 15.0,
-    "wind_gust_kmh": 26.0
-  },
-  "thermodynamics": {
-    "dewpoint_c": 21.6,
-    "cape_jkg": 1720.0,
-    "cin_jkg": -28.0,
-    "pwat_mm": 42.1,
-    "norte_surge_detected": false
-  }
-}
-```
-
-### 5.2. Componentes de UI (HTML5 + Vanilla CSS + Apache ECharts)
-1. **Header Reactivo:** Estado de conexión WebSocket en vivo y badge de nivel de alerta.
-2. **5 Tarjetas de Métricas:** Temperatura, Humedad, Presión, Viento/Racha, Lluvia 24h.
-3. **Gráfica de Series de Tiempo 24h:** Curvas de temperatura, humedad y presión con zoom dinámico.
-4. **Gauge de Convección (CAPE):** Aguja de 0 a 3,500 J/kg con zonas Verde, Ámbar y Roja.
-5. **Abanico Probabilístico 14 Días:** Barras para $p_{50}$ y líneas para $p_{90}$.
-6. **Buscador Graphify:** Caja de texto para consultas semánticas al grafo de conocimiento.
-
----
-
-## 6. Diseño de Hardware IoT y Firmware ESP32
-
-```
-+---------------------------------------------------------------------------------------------------+
-| COMPONENTE               | MODELO / ESPECIFICACIÓN              | INTERFAZ / PROTOCOLO            |
-+--------------------------+--------------------------------------+---------------------------------+
-| Microcontrolador Central | ESP32-WROOM-32 (Dual Core 240MHz)    | Wi-Fi 802.11 b/g/n / MicroPython|
-| Sensor Termohigrométrico | Bosch BME280                         | I2C (Dirección 0x76 / 0x77)     |
-| Pluviómetro              | Pluviómetro de balancín (0.2794 mm)  | GPIO 4 (Interrupción por pulso) |
-| Anemómetro               | Sensor de efecto Hall / Cazoletas    | GPIO 5 (Conteo de frecuencia)   |
-| Alimentación & Batería   | Batería LiPo 3.7V + Panel Solar 6V   | ADC GPIO 34 (Divisor resistivo) |
-+---------------------------------------------------------------------------------------------------+
-```
-
-- **Protocolo de Red:** MQTT con calidad de servicio **QoS 1** (garantía de entrega) y reconexión automática en caso de caída de WiFi.
-
----
-
-## 7. Esquema de Persistencia TimescaleDB (DDL)
+## 8. Esquema de Persistencia TimescaleDB (DDL)
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 
--- 1. Hypertable de telemetría física (partición de 7 días)
 CREATE TABLE IF NOT EXISTS sensor_telemetry (
     time TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     station_id VARCHAR(32) NOT NULL,
@@ -290,7 +247,6 @@ CREATE TABLE IF NOT EXISTS sensor_telemetry (
 
 SELECT create_hypertable('sensor_telemetry', 'time', chunk_time_interval => INTERVAL '7 days', if_not_exists => TRUE);
 
--- 2. Vista agregada continua de 5 minutos
 CREATE MATERIALIZED VIEW IF NOT EXISTS telemetry_5min
 WITH (timescaledb.continuous) AS
 SELECT
@@ -306,26 +262,11 @@ SELECT
 FROM sensor_telemetry
 WHERE qc_valid = TRUE
 GROUP BY bucket, station_id;
-
--- 3. Tabla de auditoría y verificación continua
-CREATE TABLE IF NOT EXISTS forecast_verification_log (
-    id BIGSERIAL PRIMARY KEY,
-    forecast_id VARCHAR(64) NOT NULL,
-    issued_at TIMESTAMPTZ NOT NULL,
-    valid_for TIMESTAMPTZ NOT NULL,
-    predicted_temp DOUBLE PRECISION,
-    observed_temp DOUBLE PRECISION,
-    predicted_rain_mm DOUBLE PRECISION,
-    observed_rain_mm DOUBLE PRECISION,
-    error_mae DOUBLE PRECISION,
-    crps_score DOUBLE PRECISION,
-    model_weights_json JSONB
-);
 ```
 
 ---
 
-## 8. Despliegue con Docker Compose
+## 9. Despliegue con Docker Compose
 
 ```yaml
 version: "3.8"
@@ -341,6 +282,11 @@ services:
       - DATABASE_URL=postgresql://ivek_user:ivek_pass@timescaledb:5432/weather_db
       - REDIS_URL=redis://redis:6379/0
       - OPEN_METEO_API=https://api.open-meteo.com/v1
+      - LLM_PROVIDER=${LLM_PROVIDER:-openai}
+      - LLM_BASE_URL=${LLM_BASE_URL:-https://api.openai.com/v1}
+      - LLM_API_KEY=${LLM_API_KEY}
+      - ORCHESTRATOR_MODEL=${ORCHESTRATOR_MODEL:-gpt-4o-mini}
+      - RISK_AGENT_MODEL=${RISK_AGENT_MODEL:-gpt-4o-mini}
     depends_on:
       timescaledb:
         condition: service_healthy
@@ -394,22 +340,4 @@ volumes:
   db_data:
   mosquitto_data:
   mosquitto_log:
-```
-
----
-
-## 9. Trazabilidad de Requerimientos y Validación
-
-```
-+------------------------------------+-----------------------------------+-----------------------------------+
-| REQUERIMIENTO                      | COMPONENTE RESPONSABLE            | CRITERIO DE ACEPTACIÓN            |
-+------------------------------------+-----------------------------------+-----------------------------------+
-| Telemetría en tiempo real          | ESP32 + MQTT + WebSockets         | Latencia < 1000 ms en dashboard   |
-| Cero alucinaciones físicas         | Subagente 2 (MetPy)               | 100% de índices vía fórmulas exactas|
-| Predicción de tormentas severas    | Subagente 3 (pysteps)             | Nowcasting radar a 0-120 min      |
-| Pronóstico probabilístico orográfico| Subagente 4 (LightGBM)           | Cuantiles p10, p50, p90 a 14 días |
-| Ahorro de tokens en LLMs           | Graphify GraphRAG                 | Consultas acotadas a budget <1500t|
-| Calibración continua               | Subagente 5 (Feedback Loop)       | Actualización de pesos CRPS/MAE   |
-| Alertas públicas multicanal        | Subagente 6 (Risk & Social)       | Clasificación en 4 niveles semáforo|
-+------------------------------------+-----------------------------------+-----------------------------------+
 ```

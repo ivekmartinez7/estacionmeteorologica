@@ -1,6 +1,8 @@
+import os
 import uuid
+import httpx
 from datetime import datetime, timedelta
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from app.schemas import (
     ForecastReport,
     TelemetryData,
@@ -13,22 +15,61 @@ from app.mcp_server import assess_basin_hydrology_risk
 
 
 class WeatherOrchestrator:
-    """Orquestador Central Multi-Agente para la estación meteorológica."""
+    """
+    Orquestador Central Multi-Agente Provider-Agnostic.
+    Permite al usuario conectar cualquier proveedor de LLM (OpenAI, OpenRouter,
+    DeepSeek, Groq, Anthropic, Gemini, Ollama, vLLM o endpoints compatibles).
+    """
 
     def __init__(self, station_id: str = "XAL-CENTRO-01", location: str = "Xalapa, Veracruz"):
         self.station_id = station_id
         self.location = location
+        self.llm_base_url = os.getenv("LLM_BASE_URL", "https://api.openai.com/v1").rstrip("/")
+        self.llm_api_key = os.getenv("LLM_API_KEY", "")
+        self.orchestrator_model = os.getenv("ORCHESTRATOR_MODEL", "gpt-4o-mini")
+        self.risk_agent_model = os.getenv("RISK_AGENT_MODEL", self.orchestrator_model)
+
+    async def _call_llm(self, prompt: str, system_prompt: str, model_name: str, max_tokens: int = 1000) -> Optional[str]:
+        """Realiza una llamada genérica a cualquier API compatible con OpenAI / Token Plan."""
+        if not self.llm_api_key or self.llm_api_key == "tu_api_key_aqui":
+            return None
+
+        url = f"{self.llm_base_url}/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {self.llm_api_key}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "model": model_name,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt}
+            ],
+            "max_tokens": max_tokens,
+            "temperature": 0.3
+        }
+
+        try:
+            async with httpx.AsyncClient(timeout=12.0) as client:
+                res = await client.post(url, headers=headers, json=payload)
+                if res.status_code == 200:
+                    data = res.json()
+                    return data["choices"][0]["message"]["content"].strip()
+        except Exception as err:
+            print(f"[LLM Gateway] Error consultando API de LLM ({model_name}): {err}")
+
+        return None
 
     async def execute_pipeline(self, telemetry: TelemetryData) -> ForecastReport:
         """
         Ejecuta el ciclo de vida completo del pronóstico:
         1. Subagente Ingesta & QC
-        2. Subagente Físico / Termodinámico
+        2. Subagente Físico / Termodinámico (Determinista MetPy)
         3. Subagente Riesgo Hidrológico & Cuencas
         4. Subagente Ensamble 14 Días
-        5. Subagente Síntesis Cognitiva & Difusión
+        5. Subagente Síntesis Cognitiva & Difusión (Vía LLM configurado o Motor Base)
         """
-        # 1. Motor Físico Determinista
+        # 1 & 2. Motor Físico Determinista (Coste $0)
         thermo_dict = compute_atmospheric_physics(
             temp_c=telemetry.temperature_c,
             rh_pct=telemetry.humidity_pct,
@@ -38,7 +79,7 @@ class WeatherOrchestrator:
         )
         thermo = ThermodynamicIndices(**thermo_dict)
 
-        # 2. Motor de Riesgo Hidrometeorológico
+        # 3. Motor de Riesgo Hidrometeorológico
         risk_dict = assess_basin_hydrology_risk(
             rain_rate_mmh=telemetry.rain_rate_mmh,
             rain_accum_24h_mm=telemetry.rain_accum_24h_mm,
@@ -48,12 +89,12 @@ class WeatherOrchestrator:
         )
         risk = RiskAssessment(**risk_dict)
 
-        # 3. Generación del Ensamble Sintético a 14 días (ECMWF/GFS/AIFS)
+        # 4. Generación del Ensamble Sintético a 14 días
         ensemble = self._generate_ensemble_14d(telemetry.temperature_c, thermo)
 
-        # 4. Síntesis Cognitiva
-        summary = self._generate_executive_summary(telemetry, thermo, risk)
-        bulletin = self._generate_public_bulletin(risk, telemetry, thermo)
+        # 5. Síntesis Cognitiva vía LLM configurado por el usuario (o fallback automático)
+        summary = await self._synthesize_summary_with_llm(telemetry, thermo, risk)
+        bulletin = await self._synthesize_bulletin_with_llm(telemetry, thermo, risk)
 
         return ForecastReport(
             forecast_id=f"FCST-{uuid.uuid4().hex[:8].upper()}",
@@ -65,6 +106,58 @@ class WeatherOrchestrator:
             executive_summary=summary,
             public_bulletin=bulletin,
             ensemble_14d=ensemble
+        )
+
+    async def _synthesize_summary_with_llm(self, t: TelemetryData, th: ThermodynamicIndices, r: RiskAssessment) -> str:
+        prompt = (
+            f"Ubicación: {self.location}\n"
+            f"Telemetría: Temp={t.temperature_c}°C, Humedad={t.humidity_pct}%, Presión={t.pressure_hpa}hPa, Viento={t.wind_speed_kmh}km/h (Racha: {t.wind_gust_kmh}km/h), Lluvia 24h={t.rain_accum_24h_mm}mm.\n"
+            f"Termodinámica: CAPE={th.cape_jkg} J/kg, CIN={th.cin_jkg} J/kg, PWAT={th.pwat_mm}mm, Frente Frío Norte Activo: {th.norte_surge_detected}.\n"
+            f"Nivel Alerta: {r.alert_level}, Riesgo Dominante: {r.dominant_hazard}.\n"
+            "Genera un resumen meteorológico ejecutivo conciso (máximo 3 oraciones)."
+        )
+        sys_prompt = "Eres el meteorólogo jefe de la estación IvekBot. Genera resúmenes técnicos precisos basados estrictamente en los datos proporcionados."
+
+        llm_response = await self._call_llm(prompt, sys_prompt, self.orchestrator_model, max_tokens=250)
+        if llm_response:
+            return llm_response
+
+        # Fallback determinista si no hay API key configurada
+        if th.norte_surge_detected:
+            return (
+                f"Frente Frío ('Norte') activo en {self.location}. Viento sostenido de {t.wind_speed_kmh} km/h "
+                f"con rachas de {t.wind_gust_kmh} km/h. Descenso térmico y lluvias ligeras a moderadas."
+            )
+        if th.cape_jkg > 1500:
+            return (
+                f"Alta inestabilidad atmosférica (CAPE: {th.cape_jkg} J/kg, Agua Precipitable: {th.pwat_mm} mm). "
+                f"Forzamiento orográfico favorece tormentas convectivas vespertinas con potencial de descargas eléctricas."
+            )
+        return (
+            f"Condiciones meteorológicas estables en {self.location}. Temperatura actual: {t.temperature_c} °C, "
+            f"Humedad: {t.humidity_pct}%, Presión: {t.pressure_hpa} hPa. No se prevén eventos severos inmediatos."
+        )
+
+    async def _synthesize_bulletin_with_llm(self, t: TelemetryData, th: ThermodynamicIndices, r: RiskAssessment) -> str:
+        prompt = (
+            f"Alerta: {r.alert_level}, Peligro: {r.dominant_hazard}, Temp: {t.temperature_c}°C, Lluvia 24h: {t.rain_accum_24h_mm}mm, Viento: {t.wind_speed_kmh}km/h.\n"
+            f"Acciones recomendadas: {', '.join(r.recommended_actions)}.\n"
+            "Redacta un aviso breve con emojis formateado para WhatsApp / Telegram / X para la población."
+        )
+        sys_prompt = "Genera avisos meteorológicos de Protección Civil claros, directos y con emojis informativos."
+
+        llm_response = await self._call_llm(prompt, sys_prompt, self.risk_agent_model, max_tokens=300)
+        if llm_response:
+            return llm_response
+
+        # Fallback determinista
+        icon_map = {"VERDE": "🟢", "AMARILLO": "🟡", "NARANJA": "🟠", "ROJO": "🔴"}
+        icon = icon_map.get(r.alert_level, "⚪")
+        return (
+            f"{icon} AVISO METEOROLÓGICO [{r.alert_level}] — Xalapa y Región\n"
+            f"• Riesgo Dominante: {r.dominant_hazard.replace('_', ' ')}\n"
+            f"• Temperatura: {t.temperature_c}°C | Humedad: {t.humidity_pct}% | Viento: {t.wind_speed_kmh} km/h\n"
+            f"• Recomendación: {', '.join(r.recommended_actions[:2]) if r.recommended_actions else 'Mantener precauciones normales.'}"
         )
 
     def _generate_ensemble_14d(self, current_temp: float, thermo: ThermodynamicIndices) -> List[EnsembleForecastDay]:
@@ -94,29 +187,3 @@ class WeatherOrchestrator:
                 dominant_condition=cond
             ))
         return days
-
-    def _generate_executive_summary(self, t: TelemetryData, th: ThermodynamicIndices, r: RiskAssessment) -> str:
-        if th.norte_surge_detected:
-            return (
-                f"Frente Frío ('Norte') activo en {self.location}. Viento sostenido de {t.wind_speed_kmh} km/h "
-                f"con rachas de {t.wind_gust_kmh} km/h. Descenso térmico y lluvias ligeras a moderadas."
-            )
-        if th.cape_jkg > 1500:
-            return (
-                f"Alta inestabilidad atmosférica (CAPE: {th.cape_jkg} J/kg, Agua Precipitable: {th.pwat_mm} mm). "
-                f"Forzamiento orográfico favorece tormentas convectivas vespertinas con potencial de descargas eléctricas."
-            )
-        return (
-            f"Condiciones meteorológicas estables en {self.location}. Temperatura actual: {t.temperature_c} °C, "
-            f"Humedad: {t.humidity_pct}%, Presión: {t.pressure_hpa} hPa. No se prevén eventos severos inmediatos."
-        )
-
-    def _generate_public_bulletin(self, r: RiskAssessment, t: TelemetryData, th: ThermodynamicIndices) -> str:
-        icon_map = {"VERDE": "🟢", "AMARILLO": "🟡", "NARANJA": "🟠", "ROJO": "🔴"}
-        icon = icon_map.get(r.alert_level, "⚪")
-        return (
-            f"{icon} AVISO METEOROLÓGICO [{r.alert_level}] — Xalapa y Región\n"
-            f"• Riesgo Dominante: {r.dominant_hazard.replace('_', ' ')}\n"
-            f"• Temperatura: {t.temperature_c}°C | Humedad: {t.humidity_pct}% | Viento: {t.wind_speed_kmh} km/h\n"
-            f"• Recomendación: {', '.join(r.recommended_actions[:2]) if r.recommended_actions else 'Mantener precauciones normales.'}"
-        )

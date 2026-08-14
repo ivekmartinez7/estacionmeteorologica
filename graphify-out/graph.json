@@ -4,28 +4,16 @@
   "graph": {},
   "nodes": [
     {
-      "label": "DashboardOverview",
+      "label": "WeatherOrchestrator",
       "file_type": "code",
-      "source_file": "app/schemas.py",
-      "source_location": "L77",
+      "source_file": "app/agents/orchestrator.py",
+      "source_location": "L17",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "id": "app_schemas_dashboardoverview",
+      "id": "app_agents_orchestrator_weatherorchestrator",
       "community": 0,
-      "norm_label": "dashboardoverview"
-    },
-    {
-      "label": "KnowledgeQueryRequest",
-      "file_type": "code",
-      "source_file": "app/schemas.py",
-      "source_location": "L88",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "app_schemas_knowledgequeryrequest",
-      "community": 0,
-      "norm_label": "knowledgequeryrequest"
+      "norm_label": "weatherorchestrator"
     },
     {
       "label": "RiskAssessment",
@@ -36,7 +24,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "app_schemas_riskassessment",
-      "community": 1,
+      "community": 0,
       "norm_label": "riskassessment"
     },
     {
@@ -48,20 +36,32 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "app_schemas_telemetrydata",
-      "community": 1,
+      "community": 0,
       "norm_label": "telemetrydata"
     },
     {
-      "label": "ConnectionManager",
+      "label": "ThermodynamicIndices",
       "file_type": "code",
-      "source_file": "app/main.py",
-      "source_location": "L57",
+      "source_file": "app/schemas.py",
+      "source_location": "L31",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "id": "app_main_connectionmanager",
-      "community": 2,
-      "norm_label": "connectionmanager"
+      "id": "app_schemas_thermodynamicindices",
+      "community": 0,
+      "norm_label": "thermodynamicindices"
+    },
+    {
+      "label": "DashboardOverview",
+      "file_type": "code",
+      "source_file": "app/schemas.py",
+      "source_location": "L77",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "app_schemas_dashboardoverview",
+      "community": 1,
+      "norm_label": "dashboardoverview"
     },
     {
       "label": "EnsembleForecastDay",
@@ -72,7 +72,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "app_schemas_ensembleforecastday",
-      "community": 4,
+      "community": 2,
       "norm_label": "ensembleforecastday"
     },
     {
@@ -84,8 +84,20 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "app_schemas_forecastreport",
-      "community": 4,
+      "community": 2,
       "norm_label": "forecastreport"
+    },
+    {
+      "label": "KnowledgeQueryRequest",
+      "file_type": "code",
+      "source_file": "app/schemas.py",
+      "source_location": "L88",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "app_schemas_knowledgequeryrequest",
+      "community": 2,
+      "norm_label": "knowledgequeryrequest"
     },
     {
       "label": "SensorQualityControl",
@@ -96,32 +108,86 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "app_schemas_sensorqualitycontrol",
-      "community": 4,
+      "community": 2,
       "norm_label": "sensorqualitycontrol"
     },
     {
-      "label": "WeatherOrchestrator",
+      "label": "ConnectionManager",
       "file_type": "code",
-      "source_file": "app/agents/orchestrator.py",
-      "source_location": "L15",
+      "source_file": "app/main.py",
+      "source_location": "L57",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "id": "app_agents_orchestrator_weatherorchestrator",
-      "community": 6,
-      "norm_label": "weatherorchestrator"
+      "id": "app_main_connectionmanager",
+      "community": 4,
+      "norm_label": "connectionmanager"
     },
     {
-      "label": "ThermodynamicIndices",
+      "label": "._call_llm()",
       "file_type": "code",
-      "source_file": "app/schemas.py",
-      "source_location": "L31",
+      "source_file": "app/agents/orchestrator.py",
+      "source_location": "L32",
       "_callable": true,
-      "_callable_class": true,
       "_origin": "ast",
-      "id": "app_schemas_thermodynamicindices",
-      "community": 6,
-      "norm_label": "thermodynamicindices"
+      "id": "app_agents_orchestrator_weatherorchestrator_call_llm",
+      "community": 0,
+      "norm_label": "._call_llm()"
+    },
+    {
+      "label": ".execute_pipeline()",
+      "file_type": "code",
+      "source_file": "app/agents/orchestrator.py",
+      "source_location": "L63",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "app_agents_orchestrator_weatherorchestrator_execute_pipeline",
+      "community": 0,
+      "norm_label": ".execute_pipeline()"
+    },
+    {
+      "label": "._generate_ensemble_14d()",
+      "file_type": "code",
+      "source_file": "app/agents/orchestrator.py",
+      "source_location": "L163",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "app_agents_orchestrator_weatherorchestrator_generate_ensemble_14d",
+      "community": 0,
+      "norm_label": "._generate_ensemble_14d()"
+    },
+    {
+      "label": ".__init__()",
+      "file_type": "code",
+      "source_file": "app/agents/orchestrator.py",
+      "source_location": "L24",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "app_agents_orchestrator_weatherorchestrator_init",
+      "community": 0,
+      "norm_label": ".__init__()"
+    },
+    {
+      "label": "._synthesize_bulletin_with_llm()",
+      "file_type": "code",
+      "source_file": "app/agents/orchestrator.py",
+      "source_location": "L141",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "app_agents_orchestrator_weatherorchestrator_synthesize_bulletin_with_llm",
+      "community": 0,
+      "norm_label": "._synthesize_bulletin_with_llm()"
+    },
+    {
+      "label": "._synthesize_summary_with_llm()",
+      "file_type": "code",
+      "source_file": "app/agents/orchestrator.py",
+      "source_location": "L111",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "app_agents_orchestrator_weatherorchestrator_synthesize_summary_with_llm",
+      "community": 0,
+      "norm_label": "._synthesize_summary_with_llm()"
     },
     {
       "label": "get_dashboard_overview()",
@@ -131,7 +197,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "app_main_get_dashboard_overview",
-      "community": 0,
+      "community": 1,
       "norm_label": "get_dashboard_overview()"
     },
     {
@@ -142,7 +208,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "app_main_get_forecast_report",
-      "community": 0,
+      "community": 1,
       "norm_label": "get_forecast_report()"
     },
     {
@@ -153,7 +219,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "app_main_ingest_telemetry",
-      "community": 0,
+      "community": 1,
       "norm_label": "ingest_telemetry()"
     },
     {
@@ -164,7 +230,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "app_main_query_knowledge",
-      "community": 0,
+      "community": 1,
       "norm_label": "query_knowledge()"
     },
     {
@@ -175,7 +241,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "app_main_serve_dashboard",
-      "community": 0,
+      "community": 1,
       "norm_label": "serve_dashboard()"
     },
     {
@@ -186,7 +252,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "app_main_simulate_realtime_weather_stream",
-      "community": 0,
+      "community": 1,
       "norm_label": "simulate_realtime_weather_stream()"
     },
     {
@@ -197,250 +263,19 @@
       "_callable": true,
       "_origin": "ast",
       "id": "app_main_startup_event",
-      "community": 0,
+      "community": 1,
       "norm_label": "startup_event()"
     },
     {
-      "label": "query_graphify_knowledge()",
+      "label": "assess_basin_hydrology_risk()",
       "file_type": "code",
       "source_file": "app/mcp_server.py",
-      "source_location": "L100",
+      "source_location": "L36",
       "_callable": true,
       "_origin": "ast",
-      "id": "app_mcp_server_query_graphify_knowledge",
-      "community": 0,
-      "norm_label": "query_graphify_knowledge()"
-    },
-    {
-      "label": ".execute_pipeline()",
-      "file_type": "code",
-      "source_file": "app/agents/orchestrator.py",
-      "source_location": "L22",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "app_agents_orchestrator_weatherorchestrator_execute_pipeline",
-      "community": 1,
-      "norm_label": ".execute_pipeline()"
-    },
-    {
-      "label": "._generate_executive_summary()",
-      "file_type": "code",
-      "source_file": "app/agents/orchestrator.py",
-      "source_location": "L98",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "app_agents_orchestrator_weatherorchestrator_generate_executive_summary",
-      "community": 1,
-      "norm_label": "._generate_executive_summary()"
-    },
-    {
-      "label": "._generate_public_bulletin()",
-      "file_type": "code",
-      "source_file": "app/agents/orchestrator.py",
-      "source_location": "L114",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "app_agents_orchestrator_weatherorchestrator_generate_public_bulletin",
-      "community": 1,
-      "norm_label": "._generate_public_bulletin()"
-    },
-    {
-      "label": "run_simulation()",
-      "file_type": "code",
-      "source_file": "simulator/sensor_simulator.py",
-      "source_location": "L12",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "simulator_sensor_simulator_run_simulation",
-      "community": 10,
-      "norm_label": "run_simulation()"
-    },
-    {
-      "label": "build_project_graph()",
-      "file_type": "code",
-      "source_file": "build_graph.py",
-      "source_location": "L12",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "build_graph_build_project_graph",
-      "community": 11,
-      "norm_label": "build_project_graph()"
-    },
-    {
-      "label": ".broadcast()",
-      "file_type": "code",
-      "source_file": "app/main.py",
-      "source_location": "L70",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "app_main_connectionmanager_broadcast",
-      "community": 2,
-      "norm_label": ".broadcast()"
-    },
-    {
-      "label": ".connect()",
-      "file_type": "code",
-      "source_file": "app/main.py",
-      "source_location": "L62",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "app_main_connectionmanager_connect",
-      "community": 2,
-      "norm_label": ".connect()"
-    },
-    {
-      "label": ".disconnect()",
-      "file_type": "code",
-      "source_file": "app/main.py",
-      "source_location": "L66",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "app_main_connectionmanager_disconnect",
-      "community": 2,
-      "norm_label": ".disconnect()"
-    },
-    {
-      "label": ".__init__()",
-      "file_type": "code",
-      "source_file": "app/main.py",
-      "source_location": "L59",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "app_main_connectionmanager_init",
-      "community": 2,
-      "norm_label": ".__init__()"
-    },
-    {
-      "label": "websocket_endpoint()",
-      "file_type": "code",
-      "source_file": "app/main.py",
-      "source_location": "L133",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "app_main_websocket_endpoint",
-      "community": 2,
-      "norm_label": "websocket_endpoint()"
-    },
-    {
-      "label": "calculate_dewpoint()",
-      "file_type": "code",
-      "source_file": "app/physics_engine.py",
-      "source_location": "L13",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "app_physics_engine_calculate_dewpoint",
+      "id": "app_mcp_server_assess_basin_hydrology_risk",
       "community": 3,
-      "norm_label": "calculate_dewpoint()"
-    },
-    {
-      "label": "calculate_lcl()",
-      "file_type": "code",
-      "source_file": "app/physics_engine.py",
-      "source_location": "L31",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "app_physics_engine_calculate_lcl",
-      "community": 3,
-      "norm_label": "calculate_lcl()"
-    },
-    {
-      "label": "compute_atmospheric_physics()",
-      "file_type": "code",
-      "source_file": "app/physics_engine.py",
-      "source_location": "L50",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "app_physics_engine_compute_atmospheric_physics",
-      "community": 3,
-      "norm_label": "compute_atmospheric_physics()"
-    },
-    {
-      "label": "connectWebSocket()",
-      "file_type": "code",
-      "source_file": "static/js/dashboard.js",
-      "source_location": "L266",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "static_js_dashboard_connectwebsocket",
-      "community": 5,
-      "norm_label": "connectwebsocket()"
-    },
-    {
-      "label": "initCharts()",
-      "file_type": "code",
-      "source_file": "static/js/dashboard.js",
-      "source_location": "L26",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "static_js_dashboard_initcharts",
-      "community": 5,
-      "norm_label": "initcharts()"
-    },
-    {
-      "label": "loadForecastReport()",
-      "file_type": "code",
-      "source_file": "static/js/dashboard.js",
-      "source_location": "L195",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "static_js_dashboard_loadforecastreport",
-      "community": 5,
-      "norm_label": "loadforecastreport()"
-    },
-    {
-      "label": "loadInitialData()",
-      "file_type": "code",
-      "source_file": "static/js/dashboard.js",
-      "source_location": "L164",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "static_js_dashboard_loadinitialdata",
-      "community": 5,
-      "norm_label": "loadinitialdata()"
-    },
-    {
-      "label": "setupGraphifySearch()",
-      "file_type": "code",
-      "source_file": "static/js/dashboard.js",
-      "source_location": "L296",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "static_js_dashboard_setupgraphifysearch",
-      "community": 5,
-      "norm_label": "setupgraphifysearch()"
-    },
-    {
-      "label": "updateTelemetryUI()",
-      "file_type": "code",
-      "source_file": "static/js/dashboard.js",
-      "source_location": "L221",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "static_js_dashboard_updatetelemetryui",
-      "community": 5,
-      "norm_label": "updatetelemetryui()"
-    },
-    {
-      "label": "._generate_ensemble_14d()",
-      "file_type": "code",
-      "source_file": "app/agents/orchestrator.py",
-      "source_location": "L70",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "app_agents_orchestrator_weatherorchestrator_generate_ensemble_14d",
-      "community": 6,
-      "norm_label": "._generate_ensemble_14d()"
-    },
-    {
-      "label": ".__init__()",
-      "file_type": "code",
-      "source_file": "app/agents/orchestrator.py",
-      "source_location": "L18",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "app_agents_orchestrator_weatherorchestrator_init",
-      "community": 6,
-      "norm_label": ".__init__()"
+      "norm_label": "assess_basin_hydrology_risk()"
     },
     {
       "label": "calculate_thermodynamics()",
@@ -450,7 +285,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "app_mcp_server_calculate_thermodynamics",
-      "community": 7,
+      "community": 3,
       "norm_label": "calculate_thermodynamics()"
     },
     {
@@ -461,8 +296,173 @@
       "_callable": true,
       "_origin": "ast",
       "id": "app_mcp_server_ingest_and_validate_telemetry",
-      "community": 7,
+      "community": 3,
       "norm_label": "ingest_and_validate_telemetry()"
+    },
+    {
+      "label": "query_graphify_knowledge()",
+      "file_type": "code",
+      "source_file": "app/mcp_server.py",
+      "source_location": "L100",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "app_mcp_server_query_graphify_knowledge",
+      "community": 3,
+      "norm_label": "query_graphify_knowledge()"
+    },
+    {
+      "label": ".broadcast()",
+      "file_type": "code",
+      "source_file": "app/main.py",
+      "source_location": "L70",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "app_main_connectionmanager_broadcast",
+      "community": 4,
+      "norm_label": ".broadcast()"
+    },
+    {
+      "label": ".connect()",
+      "file_type": "code",
+      "source_file": "app/main.py",
+      "source_location": "L62",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "app_main_connectionmanager_connect",
+      "community": 4,
+      "norm_label": ".connect()"
+    },
+    {
+      "label": ".disconnect()",
+      "file_type": "code",
+      "source_file": "app/main.py",
+      "source_location": "L66",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "app_main_connectionmanager_disconnect",
+      "community": 4,
+      "norm_label": ".disconnect()"
+    },
+    {
+      "label": ".__init__()",
+      "file_type": "code",
+      "source_file": "app/main.py",
+      "source_location": "L59",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "app_main_connectionmanager_init",
+      "community": 4,
+      "norm_label": ".__init__()"
+    },
+    {
+      "label": "websocket_endpoint()",
+      "file_type": "code",
+      "source_file": "app/main.py",
+      "source_location": "L133",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "app_main_websocket_endpoint",
+      "community": 4,
+      "norm_label": "websocket_endpoint()"
+    },
+    {
+      "label": "calculate_dewpoint()",
+      "file_type": "code",
+      "source_file": "app/physics_engine.py",
+      "source_location": "L13",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "app_physics_engine_calculate_dewpoint",
+      "community": 5,
+      "norm_label": "calculate_dewpoint()"
+    },
+    {
+      "label": "calculate_lcl()",
+      "file_type": "code",
+      "source_file": "app/physics_engine.py",
+      "source_location": "L31",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "app_physics_engine_calculate_lcl",
+      "community": 5,
+      "norm_label": "calculate_lcl()"
+    },
+    {
+      "label": "compute_atmospheric_physics()",
+      "file_type": "code",
+      "source_file": "app/physics_engine.py",
+      "source_location": "L50",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "app_physics_engine_compute_atmospheric_physics",
+      "community": 5,
+      "norm_label": "compute_atmospheric_physics()"
+    },
+    {
+      "label": "connectWebSocket()",
+      "file_type": "code",
+      "source_file": "static/js/dashboard.js",
+      "source_location": "L266",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "static_js_dashboard_connectwebsocket",
+      "community": 6,
+      "norm_label": "connectwebsocket()"
+    },
+    {
+      "label": "initCharts()",
+      "file_type": "code",
+      "source_file": "static/js/dashboard.js",
+      "source_location": "L26",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "static_js_dashboard_initcharts",
+      "community": 6,
+      "norm_label": "initcharts()"
+    },
+    {
+      "label": "loadForecastReport()",
+      "file_type": "code",
+      "source_file": "static/js/dashboard.js",
+      "source_location": "L195",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "static_js_dashboard_loadforecastreport",
+      "community": 6,
+      "norm_label": "loadforecastreport()"
+    },
+    {
+      "label": "loadInitialData()",
+      "file_type": "code",
+      "source_file": "static/js/dashboard.js",
+      "source_location": "L164",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "static_js_dashboard_loadinitialdata",
+      "community": 6,
+      "norm_label": "loadinitialdata()"
+    },
+    {
+      "label": "setupGraphifySearch()",
+      "file_type": "code",
+      "source_file": "static/js/dashboard.js",
+      "source_location": "L296",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "static_js_dashboard_setupgraphifysearch",
+      "community": 6,
+      "norm_label": "setupgraphifysearch()"
+    },
+    {
+      "label": "updateTelemetryUI()",
+      "file_type": "code",
+      "source_file": "static/js/dashboard.js",
+      "source_location": "L221",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "static_js_dashboard_updatetelemetryui",
+      "community": 6,
+      "norm_label": "updatetelemetryui()"
     },
     {
       "label": "connect_wifi()",
@@ -472,7 +472,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "firmware_esp32_sensor_node_connect_wifi",
-      "community": 8,
+      "community": 7,
       "norm_label": "connect_wifi()"
     },
     {
@@ -483,7 +483,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "firmware_esp32_sensor_node_main",
-      "community": 8,
+      "community": 7,
       "norm_label": "main()"
     },
     {
@@ -494,7 +494,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "firmware_esp32_sensor_node_rain_interrupt_handler",
-      "community": 8,
+      "community": 7,
       "norm_label": "rain_interrupt_handler()"
     },
     {
@@ -505,118 +505,59 @@
       "_callable": true,
       "_origin": "ast",
       "id": "firmware_esp32_sensor_node_read_battery_voltage",
-      "community": 8,
+      "community": 7,
       "norm_label": "read_battery_voltage()"
     },
     {
-      "label": "assess_basin_hydrology_risk()",
+      "label": "run_simulation()",
       "file_type": "code",
-      "source_file": "app/mcp_server.py",
-      "source_location": "L36",
+      "source_file": "simulator/sensor_simulator.py",
+      "source_location": "L12",
       "_callable": true,
       "_origin": "ast",
-      "id": "app_mcp_server_assess_basin_hydrology_risk",
+      "id": "simulator_sensor_simulator_run_simulation",
+      "community": 8,
+      "norm_label": "run_simulation()"
+    },
+    {
+      "label": "build_project_graph()",
+      "file_type": "code",
+      "source_file": "build_graph.py",
+      "source_location": "L12",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "build_graph_build_project_graph",
       "community": 9,
-      "norm_label": "assess_basin_hydrology_risk()"
+      "norm_label": "build_project_graph()"
     },
     {
-      "label": "main.py",
-      "file_type": "code",
-      "source_file": "app/main.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "app_main",
-      "community": 0,
-      "norm_label": "main.py"
-    },
-    {
-      "label": "Any",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "app_main_py_any",
-      "community": 0,
-      "norm_label": "any"
-    },
-    {
-      "label": "get",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "get",
-      "community": 0,
-      "norm_label": "get"
-    },
-    {
-      "label": "on_event",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "on_event",
-      "community": 0,
-      "norm_label": "on_event"
-    },
-    {
-      "label": "post",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "post",
-      "community": 0,
-      "norm_label": "post"
-    },
-    {
-      "label": "Generador en tiempo real de telemetr\u00eda viva para clientes conectados.",
+      "label": "Orquestador Central Multi-Agente Provider-Agnostic. Permite al usuario conectar\u2026",
       "file_type": "rationale",
-      "source_file": "app/main.py",
-      "source_location": "L104",
+      "source_file": "app/agents/orchestrator.py",
+      "source_location": "L18",
       "_origin": "ast",
-      "id": "app_main_rationale_104",
+      "id": "app_agents_orchestrator_rationale_18",
       "community": 0,
-      "norm_label": "generador en tiempo real de telemetria viva para clientes conectados."
+      "norm_label": "orquestador central multi-agente provider-agnostic. permite al usuario conectar..."
     },
     {
-      "label": "Realiza una consulta sem\u00e1ntica GraphRAG al Grafo de Conocimiento del proyecto\u2026",
+      "label": "Realiza una llamada gen\u00e9rica a cualquier API compatible con OpenAI / Token Plan.",
       "file_type": "rationale",
-      "source_file": "app/mcp_server.py",
-      "source_location": "L101",
+      "source_file": "app/agents/orchestrator.py",
+      "source_location": "L33",
       "_origin": "ast",
-      "id": "app_mcp_server_rationale_101",
+      "id": "app_agents_orchestrator_rationale_33",
       "community": 0,
-      "norm_label": "realiza una consulta semantica graphrag al grafo de conocimiento del proyecto..."
-    },
-    {
-      "label": "Payload consolidado para el Dashboard en tiempo real.",
-      "file_type": "rationale",
-      "source_file": "app/schemas.py",
-      "source_location": "L78",
-      "_origin": "ast",
-      "id": "app_schemas_rationale_78",
-      "community": 0,
-      "norm_label": "payload consolidado para el dashboard en tiempo real."
-    },
-    {
-      "label": "Petici\u00f3n de consulta GraphRAG a Graphify.",
-      "file_type": "rationale",
-      "source_file": "app/schemas.py",
-      "source_location": "L89",
-      "_origin": "ast",
-      "id": "app_schemas_rationale_89",
-      "community": 0,
-      "norm_label": "peticion de consulta graphrag a graphify."
+      "norm_label": "realiza una llamada generica a cualquier api compatible con openai / token plan."
     },
     {
       "label": "Ejecuta el ciclo de vida completo del pron\u00f3stico: 1. Subagente Ingesta & QC 2.\u2026",
       "file_type": "rationale",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L23",
+      "source_location": "L64",
       "_origin": "ast",
-      "id": "app_agents_orchestrator_rationale_23",
-      "community": 1,
+      "id": "app_agents_orchestrator_rationale_64",
+      "community": 0,
       "norm_label": "ejecuta el ciclo de vida completo del pronostico: 1. subagente ingesta & qc 2...."
     },
     {
@@ -626,8 +567,18 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "app_schemas_rationale_14",
-      "community": 1,
+      "community": 0,
       "norm_label": "telemetria fisica de superficie enviada por la estacion esp32."
+    },
+    {
+      "label": "\u00cdndices de inestabilidad y f\u00edsica atmosf\u00e9rica calculados por MetPy.",
+      "file_type": "rationale",
+      "source_file": "app/schemas.py",
+      "source_location": "L32",
+      "_origin": "ast",
+      "id": "app_schemas_rationale_32",
+      "community": 0,
+      "norm_label": "indices de inestabilidad y fisica atmosferica calculados por metpy."
     },
     {
       "label": "Evaluaci\u00f3n de riesgo hidrometeorol\u00f3gico.",
@@ -636,68 +587,18 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "app_schemas_rationale_45",
-      "community": 1,
+      "community": 0,
       "norm_label": "evaluacion de riesgo hidrometeorologico."
     },
     {
-      "label": "sensor_simulator.py",
+      "label": "main.py",
       "file_type": "code",
-      "source_file": "simulator/sensor_simulator.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "simulator_sensor_simulator",
-      "community": 10,
-      "norm_label": "sensor_simulator.py"
-    },
-    {
-      "label": "Simulador de Estaci\u00f3n Meteorol\u00f3gica en Python Env\u00eda paquetes HTTP / MQTT a la\u2026",
-      "file_type": "rationale",
-      "source_file": "simulator/sensor_simulator.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "simulator_sensor_simulator_rationale_1",
-      "community": 10,
-      "norm_label": "simulador de estacion meteorologica en python envia paquetes http / mqtt a la..."
-    },
-    {
-      "label": "build_graph.py",
-      "file_type": "code",
-      "source_file": "build_graph.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "build_graph",
-      "community": 11,
-      "norm_label": "build_graph.py"
-    },
-    {
-      "label": "WebSocket",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "websocket",
-      "community": 2,
-      "norm_label": "websocket"
-    },
-    {
-      "label": "Gestiona conexiones activas de WebSockets para dashboards en tiempo real.",
-      "file_type": "rationale",
       "source_file": "app/main.py",
-      "source_location": "L58",
-      "_origin": "ast",
-      "id": "app_main_rationale_58",
-      "community": 2,
-      "norm_label": "gestiona conexiones activas de websockets para dashboards en tiempo real."
-    },
-    {
-      "label": "physics_engine.py",
-      "file_type": "code",
-      "source_file": "app/physics_engine.py",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "app_physics_engine",
-      "community": 3,
-      "norm_label": "physics_engine.py"
+      "id": "app_main",
+      "community": 1,
+      "norm_label": "main.py"
     },
     {
       "label": "Any",
@@ -705,39 +606,69 @@
       "source_file": "",
       "source_location": "",
       "_origin": "ast",
-      "id": "app_physics_engine_py_any",
-      "community": 3,
+      "id": "app_main_py_any",
+      "community": 1,
       "norm_label": "any"
     },
     {
-      "label": "Calcula el punto de roc\u00edo usando la ecuaci\u00f3n de Magnus-Tetens.",
-      "file_type": "rationale",
-      "source_file": "app/physics_engine.py",
-      "source_location": "L14",
+      "label": "get",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
       "_origin": "ast",
-      "id": "app_physics_engine_rationale_14",
-      "community": 3,
-      "norm_label": "calcula el punto de rocio usando la ecuacion de magnus-tetens."
+      "id": "get",
+      "community": 1,
+      "norm_label": "get"
     },
     {
-      "label": "Calcula el Nivel de Condensaci\u00f3n por Elevaci\u00f3n (LCL en hPa).",
-      "file_type": "rationale",
-      "source_file": "app/physics_engine.py",
-      "source_location": "L32",
+      "label": "on_event",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
       "_origin": "ast",
-      "id": "app_physics_engine_rationale_32",
-      "community": 3,
-      "norm_label": "calcula el nivel de condensacion por elevacion (lcl en hpa)."
+      "id": "on_event",
+      "community": 1,
+      "norm_label": "on_event"
     },
     {
-      "label": "Calcula el perfil termodin\u00e1mico y determinista completo sin intervenci\u00f3n de\u2026",
-      "file_type": "rationale",
-      "source_file": "app/physics_engine.py",
-      "source_location": "L58",
+      "label": "post",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
       "_origin": "ast",
-      "id": "app_physics_engine_rationale_58",
-      "community": 3,
-      "norm_label": "calcula el perfil termodinamico y determinista completo sin intervencion de..."
+      "id": "post",
+      "community": 1,
+      "norm_label": "post"
+    },
+    {
+      "label": "Generador en tiempo real de telemetr\u00eda viva para clientes conectados.",
+      "file_type": "rationale",
+      "source_file": "app/main.py",
+      "source_location": "L104",
+      "_origin": "ast",
+      "id": "app_main_rationale_104",
+      "community": 1,
+      "norm_label": "generador en tiempo real de telemetria viva para clientes conectados."
+    },
+    {
+      "label": "Payload consolidado para el Dashboard en tiempo real.",
+      "file_type": "rationale",
+      "source_file": "app/schemas.py",
+      "source_location": "L78",
+      "_origin": "ast",
+      "id": "app_schemas_rationale_78",
+      "community": 1,
+      "norm_label": "payload consolidado para el dashboard en tiempo real."
+    },
+    {
+      "label": "orchestrator.py",
+      "file_type": "code",
+      "source_file": "app/agents/orchestrator.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "app_agents_orchestrator",
+      "community": 2,
+      "norm_label": "orchestrator.py"
     },
     {
       "label": "schemas.py",
@@ -746,7 +677,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_schemas",
-      "community": 4,
+      "community": 2,
       "norm_label": "schemas.py"
     },
     {
@@ -756,7 +687,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "basemodel",
-      "community": 4,
+      "community": 2,
       "norm_label": "basemodel"
     },
     {
@@ -766,7 +697,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "app_schemas_rationale_54",
-      "community": 4,
+      "community": 2,
       "norm_label": "pronostico probabilistico diario del ensamble."
     },
     {
@@ -776,7 +707,7 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "app_schemas_rationale_65",
-      "community": 4,
+      "community": 2,
       "norm_label": "reporte integral consolidado por el orquestador multi-agente."
     },
     {
@@ -786,48 +717,28 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "app_schemas_rationale_7",
-      "community": 4,
+      "community": 2,
       "norm_label": "banderas de control de calidad para datos de sensores fisicos."
     },
     {
-      "label": "dashboard.js",
-      "file_type": "code",
-      "source_file": "static/js/dashboard.js",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "static_js_dashboard",
-      "community": 5,
-      "norm_label": "dashboard.js"
-    },
-    {
-      "label": "THEME",
-      "file_type": "code",
-      "source_file": "static/js/dashboard.js",
-      "source_location": "L9",
-      "_origin": "ast",
-      "id": "static_js_dashboard_theme",
-      "community": 5,
-      "norm_label": "theme"
-    },
-    {
-      "label": "Orquestador Central Multi-Agente para la estaci\u00f3n meteorol\u00f3gica.",
-      "file_type": "rationale",
-      "source_file": "app/agents/orchestrator.py",
-      "source_location": "L16",
-      "_origin": "ast",
-      "id": "app_agents_orchestrator_rationale_16",
-      "community": 6,
-      "norm_label": "orquestador central multi-agente para la estacion meteorologica."
-    },
-    {
-      "label": "\u00cdndices de inestabilidad y f\u00edsica atmosf\u00e9rica calculados por MetPy.",
+      "label": "Petici\u00f3n de consulta GraphRAG a Graphify.",
       "file_type": "rationale",
       "source_file": "app/schemas.py",
-      "source_location": "L32",
+      "source_location": "L89",
       "_origin": "ast",
-      "id": "app_schemas_rationale_32",
-      "community": 6,
-      "norm_label": "indices de inestabilidad y fisica atmosferica calculados por metpy."
+      "id": "app_schemas_rationale_89",
+      "community": 2,
+      "norm_label": "peticion de consulta graphrag a graphify."
+    },
+    {
+      "label": "mcp_server.py",
+      "file_type": "code",
+      "source_file": "app/mcp_server.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "app_mcp_server",
+      "community": 3,
+      "norm_label": "mcp_server.py"
     },
     {
       "label": "Any",
@@ -836,7 +747,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "app_mcp_server_py_any",
-      "community": 7,
+      "community": 3,
       "norm_label": "any"
     },
     {
@@ -846,8 +757,18 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tool",
-      "community": 7,
+      "community": 3,
       "norm_label": "tool"
+    },
+    {
+      "label": "Realiza una consulta sem\u00e1ntica GraphRAG al Grafo de Conocimiento del proyecto\u2026",
+      "file_type": "rationale",
+      "source_file": "app/mcp_server.py",
+      "source_location": "L101",
+      "_origin": "ast",
+      "id": "app_mcp_server_rationale_101",
+      "community": 3,
+      "norm_label": "realiza una consulta semantica graphrag al grafo de conocimiento del proyecto..."
     },
     {
       "label": "Asimila, valida y aplica control de calidad (QC) a los datos de la estaci\u00f3n\u2026",
@@ -856,7 +777,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "app_mcp_server_rationale_13",
-      "community": 7,
+      "community": 3,
       "norm_label": "asimila, valida y aplica control de calidad (qc) a los datos de la estacion..."
     },
     {
@@ -866,8 +787,108 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "app_mcp_server_rationale_24",
-      "community": 7,
+      "community": 3,
       "norm_label": "ejecuta el calculo determinista de termodinamica atmosferica (cape, cin, lcl,..."
+    },
+    {
+      "label": "Eval\u00faa el riesgo hidrometeorol\u00f3gico en la cuenca Xalapa / Actopan / La Antigua.",
+      "file_type": "rationale",
+      "source_file": "app/mcp_server.py",
+      "source_location": "L43",
+      "_origin": "ast",
+      "id": "app_mcp_server_rationale_43",
+      "community": 3,
+      "norm_label": "evalua el riesgo hidrometeorologico en la cuenca xalapa / actopan / la antigua."
+    },
+    {
+      "label": "WebSocket",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "websocket",
+      "community": 4,
+      "norm_label": "websocket"
+    },
+    {
+      "label": "Gestiona conexiones activas de WebSockets para dashboards en tiempo real.",
+      "file_type": "rationale",
+      "source_file": "app/main.py",
+      "source_location": "L58",
+      "_origin": "ast",
+      "id": "app_main_rationale_58",
+      "community": 4,
+      "norm_label": "gestiona conexiones activas de websockets para dashboards en tiempo real."
+    },
+    {
+      "label": "physics_engine.py",
+      "file_type": "code",
+      "source_file": "app/physics_engine.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "app_physics_engine",
+      "community": 5,
+      "norm_label": "physics_engine.py"
+    },
+    {
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "app_physics_engine_py_any",
+      "community": 5,
+      "norm_label": "any"
+    },
+    {
+      "label": "Calcula el punto de roc\u00edo usando la ecuaci\u00f3n de Magnus-Tetens.",
+      "file_type": "rationale",
+      "source_file": "app/physics_engine.py",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "app_physics_engine_rationale_14",
+      "community": 5,
+      "norm_label": "calcula el punto de rocio usando la ecuacion de magnus-tetens."
+    },
+    {
+      "label": "Calcula el Nivel de Condensaci\u00f3n por Elevaci\u00f3n (LCL en hPa).",
+      "file_type": "rationale",
+      "source_file": "app/physics_engine.py",
+      "source_location": "L32",
+      "_origin": "ast",
+      "id": "app_physics_engine_rationale_32",
+      "community": 5,
+      "norm_label": "calcula el nivel de condensacion por elevacion (lcl en hpa)."
+    },
+    {
+      "label": "Calcula el perfil termodin\u00e1mico y determinista completo sin intervenci\u00f3n de\u2026",
+      "file_type": "rationale",
+      "source_file": "app/physics_engine.py",
+      "source_location": "L58",
+      "_origin": "ast",
+      "id": "app_physics_engine_rationale_58",
+      "community": 5,
+      "norm_label": "calcula el perfil termodinamico y determinista completo sin intervencion de..."
+    },
+    {
+      "label": "dashboard.js",
+      "file_type": "code",
+      "source_file": "static/js/dashboard.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "static_js_dashboard",
+      "community": 6,
+      "norm_label": "dashboard.js"
+    },
+    {
+      "label": "THEME",
+      "file_type": "code",
+      "source_file": "static/js/dashboard.js",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "static_js_dashboard_theme",
+      "community": 6,
+      "norm_label": "theme"
     },
     {
       "label": "esp32_sensor_node.py",
@@ -876,7 +897,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "firmware_esp32_sensor_node",
-      "community": 8,
+      "community": 7,
       "norm_label": "esp32_sensor_node.py"
     },
     {
@@ -886,38 +907,38 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "firmware_esp32_sensor_node_rationale_1",
-      "community": 8,
+      "community": 7,
       "norm_label": "firmware micropython para nodo iot esp32 (estacion meteorologica) conecta..."
     },
     {
-      "label": "orchestrator.py",
+      "label": "sensor_simulator.py",
       "file_type": "code",
-      "source_file": "app/agents/orchestrator.py",
+      "source_file": "simulator/sensor_simulator.py",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "app_agents_orchestrator",
-      "community": 9,
-      "norm_label": "orchestrator.py"
+      "id": "simulator_sensor_simulator",
+      "community": 8,
+      "norm_label": "sensor_simulator.py"
     },
     {
-      "label": "mcp_server.py",
-      "file_type": "code",
-      "source_file": "app/mcp_server.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "app_mcp_server",
-      "community": 9,
-      "norm_label": "mcp_server.py"
-    },
-    {
-      "label": "Eval\u00faa el riesgo hidrometeorol\u00f3gico en la cuenca Xalapa / Actopan / La Antigua.",
+      "label": "Simulador de Estaci\u00f3n Meteorol\u00f3gica en Python Env\u00eda paquetes HTTP / MQTT a la\u2026",
       "file_type": "rationale",
-      "source_file": "app/mcp_server.py",
-      "source_location": "L43",
+      "source_file": "simulator/sensor_simulator.py",
+      "source_location": "L1",
       "_origin": "ast",
-      "id": "app_mcp_server_rationale_43",
+      "id": "simulator_sensor_simulator_rationale_1",
+      "community": 8,
+      "norm_label": "simulador de estacion meteorologica en python envia paquetes http / mqtt a la..."
+    },
+    {
+      "label": "build_graph.py",
+      "file_type": "code",
+      "source_file": "build_graph.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "build_graph",
       "community": 9,
-      "norm_label": "evalua el riesgo hidrometeorologico en la cuenca xalapa / actopan / la antigua."
+      "norm_label": "build_graph.py"
     }
   ],
   "links": [
@@ -927,7 +948,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L32",
+      "source_location": "L73",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator_weatherorchestrator_execute_pipeline",
@@ -938,7 +959,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L39",
+      "source_location": "L80",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator_weatherorchestrator_execute_pipeline",
@@ -951,7 +972,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L42",
+      "source_location": "L83",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator_weatherorchestrator_execute_pipeline",
@@ -962,7 +983,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L49",
+      "source_location": "L90",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator_weatherorchestrator_execute_pipeline",
@@ -974,7 +995,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L52",
+      "source_location": "L93",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator_weatherorchestrator_execute_pipeline",
@@ -986,11 +1007,11 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L55",
+      "source_location": "L96",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator_weatherorchestrator_execute_pipeline",
-      "target": "app_agents_orchestrator_weatherorchestrator_generate_executive_summary",
+      "target": "app_agents_orchestrator_weatherorchestrator_synthesize_summary_with_llm",
       "confidence_score": 1.0
     },
     {
@@ -998,11 +1019,35 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L56",
+      "source_location": "L97",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator_weatherorchestrator_execute_pipeline",
-      "target": "app_agents_orchestrator_weatherorchestrator_generate_public_bulletin",
+      "target": "app_agents_orchestrator_weatherorchestrator_synthesize_bulletin_with_llm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/agents/orchestrator.py",
+      "source_location": "L149",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_agents_orchestrator_weatherorchestrator_synthesize_bulletin_with_llm",
+      "target": "app_agents_orchestrator_weatherorchestrator_call_llm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/agents/orchestrator.py",
+      "source_location": "L121",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_agents_orchestrator_weatherorchestrator_synthesize_summary_with_llm",
+      "target": "app_agents_orchestrator_weatherorchestrator_call_llm",
       "confidence_score": 1.0
     },
     {
@@ -1274,7 +1319,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L70",
+      "source_location": "L163",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator_weatherorchestrator_generate_ensemble_14d",
@@ -1346,7 +1391,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L11",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator",
@@ -1358,7 +1403,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L12",
+      "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator",
@@ -1370,7 +1415,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L4",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator",
@@ -1382,7 +1427,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L4",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator",
@@ -1394,7 +1439,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L4",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator",
@@ -1406,7 +1451,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L4",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator",
@@ -1418,7 +1463,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L4",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator",
@@ -1586,7 +1631,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L11",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator",
@@ -1598,7 +1643,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L12",
+      "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator",
@@ -1610,7 +1655,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L4",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator",
@@ -1694,7 +1739,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L22",
+      "source_location": "L63",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator_weatherorchestrator_execute_pipeline",
@@ -1706,7 +1751,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L70",
+      "source_location": "L163",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator_weatherorchestrator_generate_ensemble_14d",
@@ -1718,10 +1763,10 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L98",
+      "source_location": "L141",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "app_agents_orchestrator_weatherorchestrator_generate_executive_summary",
+      "source": "app_agents_orchestrator_weatherorchestrator_synthesize_bulletin_with_llm",
       "target": "app_schemas_riskassessment",
       "confidence_score": 1.0
     },
@@ -1730,10 +1775,10 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L98",
+      "source_location": "L141",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "app_agents_orchestrator_weatherorchestrator_generate_executive_summary",
+      "source": "app_agents_orchestrator_weatherorchestrator_synthesize_bulletin_with_llm",
       "target": "app_schemas_telemetrydata",
       "confidence_score": 1.0
     },
@@ -1742,10 +1787,10 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L98",
+      "source_location": "L141",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "app_agents_orchestrator_weatherorchestrator_generate_executive_summary",
+      "source": "app_agents_orchestrator_weatherorchestrator_synthesize_bulletin_with_llm",
       "target": "app_schemas_thermodynamicindices",
       "confidence_score": 1.0
     },
@@ -1754,10 +1799,10 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L114",
+      "source_location": "L111",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "app_agents_orchestrator_weatherorchestrator_generate_public_bulletin",
+      "source": "app_agents_orchestrator_weatherorchestrator_synthesize_summary_with_llm",
       "target": "app_schemas_riskassessment",
       "confidence_score": 1.0
     },
@@ -1766,10 +1811,10 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L114",
+      "source_location": "L111",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "app_agents_orchestrator_weatherorchestrator_generate_public_bulletin",
+      "source": "app_agents_orchestrator_weatherorchestrator_synthesize_summary_with_llm",
       "target": "app_schemas_telemetrydata",
       "confidence_score": 1.0
     },
@@ -1778,10 +1823,10 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L114",
+      "source_location": "L111",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "app_agents_orchestrator_weatherorchestrator_generate_public_bulletin",
+      "source": "app_agents_orchestrator_weatherorchestrator_synthesize_summary_with_llm",
       "target": "app_schemas_thermodynamicindices",
       "confidence_score": 1.0
     },
@@ -1826,7 +1871,7 @@
       "context": "return_type",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L22",
+      "source_location": "L63",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator_weatherorchestrator_execute_pipeline",
@@ -1837,7 +1882,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L15",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator",
@@ -2343,40 +2388,29 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L114",
+      "source_location": "L111",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator_weatherorchestrator",
-      "target": "app_agents_orchestrator_weatherorchestrator_generate_public_bulletin",
+      "target": "app_agents_orchestrator_weatherorchestrator_synthesize_summary_with_llm",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L18",
+      "source_location": "L141",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator_weatherorchestrator",
-      "target": "app_agents_orchestrator_weatherorchestrator_init",
+      "target": "app_agents_orchestrator_weatherorchestrator_synthesize_bulletin_with_llm",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L22",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "app_agents_orchestrator_weatherorchestrator",
-      "target": "app_agents_orchestrator_weatherorchestrator_execute_pipeline",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "app/agents/orchestrator.py",
-      "source_location": "L70",
+      "source_location": "L163",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator_weatherorchestrator",
@@ -2387,11 +2421,33 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L98",
+      "source_location": "L24",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_agents_orchestrator_weatherorchestrator",
-      "target": "app_agents_orchestrator_weatherorchestrator_generate_executive_summary",
+      "target": "app_agents_orchestrator_weatherorchestrator_init",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/agents/orchestrator.py",
+      "source_location": "L32",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_agents_orchestrator_weatherorchestrator",
+      "target": "app_agents_orchestrator_weatherorchestrator_call_llm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/agents/orchestrator.py",
+      "source_location": "L63",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_agents_orchestrator_weatherorchestrator",
+      "target": "app_agents_orchestrator_weatherorchestrator_execute_pipeline",
       "confidence_score": 1.0
     },
     {
@@ -2442,10 +2498,10 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L16",
+      "source_location": "L18",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "app_agents_orchestrator_rationale_16",
+      "source": "app_agents_orchestrator_rationale_18",
       "target": "app_agents_orchestrator_weatherorchestrator",
       "confidence_score": 1.0
     },
@@ -2453,10 +2509,21 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L23",
+      "source_location": "L33",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "app_agents_orchestrator_rationale_23",
+      "source": "app_agents_orchestrator_rationale_33",
+      "target": "app_agents_orchestrator_weatherorchestrator_call_llm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "app/agents/orchestrator.py",
+      "source_location": "L64",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_agents_orchestrator_rationale_64",
       "target": "app_agents_orchestrator_weatherorchestrator_execute_pipeline",
       "confidence_score": 1.0
     },
@@ -2697,7 +2764,18 @@
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L22",
+      "source_location": "L163",
+      "weight": 0.8,
+      "_origin": "ast",
+      "source": "app_agents_orchestrator_weatherorchestrator",
+      "target": "app_schemas_ensembleforecastday",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "app/agents/orchestrator.py",
+      "source_location": "L63",
       "weight": 0.8,
       "_origin": "ast",
       "source": "app_agents_orchestrator_weatherorchestrator",
@@ -2708,7 +2786,7 @@
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L22",
+      "source_location": "L63",
       "weight": 0.8,
       "_origin": "ast",
       "source": "app_agents_orchestrator_weatherorchestrator",
@@ -2719,7 +2797,7 @@
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L39",
+      "source_location": "L80",
       "weight": 0.8,
       "_origin": "ast",
       "source": "app_agents_orchestrator_weatherorchestrator",
@@ -2730,22 +2808,11 @@
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "app/agents/orchestrator.py",
-      "source_location": "L49",
+      "source_location": "L90",
       "weight": 0.8,
       "_origin": "ast",
       "source": "app_agents_orchestrator_weatherorchestrator",
       "target": "app_schemas_riskassessment",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "app/agents/orchestrator.py",
-      "source_location": "L70",
-      "weight": 0.8,
-      "_origin": "ast",
-      "source": "app_agents_orchestrator_weatherorchestrator",
-      "target": "app_schemas_ensembleforecastday",
       "confidence_score": 0.5
     },
     {
@@ -2793,5 +2860,6 @@
       "confidence_score": 0.5
     }
   ],
-  "hyperedges": []
+  "hyperedges": [],
+  "built_at_commit": "7cf0bf9a0d11e8b0344bc561267a0e65f9be3930"
 }

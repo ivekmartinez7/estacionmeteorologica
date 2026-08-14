@@ -1,63 +1,84 @@
 # ⚡ IvekBot Weather Station — Estación Meteorológica Digital Multi-Agente
 
-Sistema integral de meteorología digital autónoma con arquitectura híbrida (Física determinista + AI-NWP + FastMCP + Graphify GraphRAG + Dashboard reactivo en tiempo real con WebSockets).
+> **Ecosistema Meteorológico Digital Autónomo con Inteligencia Artificial, Física Atmosférica Determinista (MetPy), GraphRAG (Graphify), LLM Gateway Agnóstico y Dashboard en Tiempo Real.**
+
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg?logo=python&logoColor=white)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![FastMCP](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-purple.svg)](https://modelcontextprotocol.io)
+[![Graphify](https://img.shields.io/badge/GraphRAG-Graphify-orange.svg)](https://github.com/safishamsi/graphify)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED.svg?logo=docker&logoColor=white)](https://docker.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
 
-## 🚀 Inicio Rápido (Local)
+## 📖 Descripción del Proyecto
 
-### 1. Requisitos Previos
-- Python 3.10+ o Docker
+**IvekBot Weather Station** es una plataforma meteorológica modular y escalable que combina:
 
-### 2. Instalación de Dependencias
+1. **🔬 Núcleo Físico Determinista (`MetPy`):** Cálculos rigurosos de termodinámica atmosférica ($CAPE$, $CIN$, $PWAT$, $LCL$, $LFC$, detección de *Nortes*) a coste **$0 de tokens**.
+2. **🤖 Orquestación Multi-Agente (FastMCP):** 6 subagentes especializados y un orquestador master coordinados bajo el protocolo estándar MCP.
+3. **🔌 LLM Gateway Agnóstico (Configurable por el Usuario):** Conecta cualquier modelo comercial (OpenAI, Gemini, Anthropic, DeepSeek, Groq, OpenRouter, Mistral), servicios de planes por tokens, o servidores de inferencia local (Ollama, vLLM, LM Studio) mediante endpoints compatibles con OpenAI (`/v1/chat/completions`).
+4. **🧠 Memoria Estructurada GraphRAG (`Graphify`):** Grafo de conocimiento navegable con detección de comunidades (Louvain) que reduce drásticamente el consumo de tokens (`--budget 1500`).
+5. **⚡ Dashboard Reactivo en Tiempo Real:** Transmisión continua sub-segundo vía WebSockets (`/ws/telemetry/live`) con gráficas dinámicas de Apache ECharts y abanicos de probabilidad a 14 días ($p_{10}, p_{50}, p_{90}$).
+6. **📡 Telemetría IoT Resiliente (ESP32):** Firmware MicroPython con soporte MQTT QoS 1 y control de calidad (QC) con filtros anti-ruido (*Modified Z-Score*).
+7. **🗄️ Persistencia con TimescaleDB:** Almacenamiento optimizado de series de tiempo mediante *hypertables* particionadas y vistas materializadas continuas cada 5 minutos.
+
+---
+
+## ⚙️ Configuración de tu Proveedor de LLM Preferido
+
+Copia el archivo de ejemplo `.env.example` a `.env`:
+```bash
+cp .env.example .env
+```
+
+Configura en tu `.env` las credenciales y el modelo de tu elección:
+
+### Ejemplo 1: Con OpenAI / OpenRouter / DeepSeek / Groq
+```env
+LLM_PROVIDER=openrouter
+LLM_BASE_URL=https://openrouter.ai/api/v1
+LLM_API_KEY=tu_api_key_de_openrouter
+
+ORCHESTRATOR_MODEL=deepseek/deepseek-r1
+RISK_AGENT_MODEL=qwen/qwen-2.5-72b-instruct
+```
+
+### Ejemplo 2: Con Inferencia Local (Ollama / vLLM - 100% Gratis y Privado)
+```env
+LLM_PROVIDER=ollama
+LLM_BASE_URL=http://localhost:11434/v1
+LLM_API_KEY=ollama
+
+ORCHESTRATOR_MODEL=qwen2.5:14b
+RISK_AGENT_MODEL=qwen2.5:7b
+```
+
+> **Nota:** Si no configuras ninguna API Key, el sistema continúa funcionando al 100% en tiempo real utilizando sus motores deterministas y plantillas meteorológicas de respaldo sin fallar.
+
+---
+
+## 🚀 Inicio Rápido
+
+### 1. Instalación de Dependencias
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Ejecutar el Servidor FastAPI & Dashboard
+### 2. Ejecutar el Servidor FastAPI & Dashboard
 ```bash
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 Abre tu navegador en: **`http://localhost:8000`**
 
-### 4. (Opcional) Ejecutar con Docker Compose
+### 3. Ejecución con Docker Compose
 ```bash
 docker compose up -d --build
 ```
 
 ---
 
-## 📊 Componentes del Sistema
+## 📄 Documentación Técnica Completa
 
-- **`app/`**:
-  - `main.py`: Servidor FastAPI con WebSockets (`/ws/telemetry/live`) y REST APIs.
-  - `schemas.py`: Contratos de datos tipados en Pydantic v2.
-  - `physics_engine.py`: Motor físico determinista (MetPy / Ecuaciones de Magnus-Tetens, CAPE, CIN, LCL, PWAT, Norte).
-  - `mcp_server.py`: Servidor FastMCP con herramientas registradas para agentes LLM.
-  - `agents/orchestrator.py`: Pipeline multi-agente y ensamble a 14 días.
-- **`static/`**:
-  - `index.html`: Dashboard moderno interactivo.
-  - `css/style.css`: Estilos visuales dark-mode.
-  - `js/dashboard.js`: Conexión WebSocket y renderizado de gráficas Apache ECharts.
-- **`firmware/`**:
-  - `esp32_sensor_node.py`: Firmware MicroPython para microcontrolador ESP32 con MQTT QoS 1.
-- **`simulator/`**:
-  - `sensor_simulator.py`: Generador de telemetría simulada para pruebas en vivo.
-- **`database/`**:
-  - `init.sql`: Script DDL para TimescaleDB / PostgreSQL con hypertables.
-- **`graphify-out/`**:
-  - Base de Conocimiento GraphRAG para LLMs con detección de comunidades y reducción de costo de tokens.
-
----
-
-## 🧠 Integración Graphify (GraphRAG para LLMs)
-
-Para consultar el Grafo de Conocimiento sin gastar tokens excesivos:
-```bash
-graphify query "¿Qué condiciones disparan la alerta por Norte en Xalapa?" --budget 1200
-```
-O directamente desde la interfaz del Dashboard o vía endpoint:
-```bash
-POST /api/v1/knowledge/query
-{"question": "¿Cómo calcula el sistema el índice CAPE?", "budget_tokens": 1500}
-```
+- Consulta el **[SDD.md (Software Design Document)](SDD.md)** para la especificación formal de ingeniería de software.
+- Consulta **[estacion_meteorologica.md](estacion_meteorologica.md)** para la memoria técnica y fórmulas atmosféricas.
