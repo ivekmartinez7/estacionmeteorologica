@@ -1,0 +1,68 @@
+version: "3.8"
+
+services:
+  orchestrator:
+    build: .
+    container_name: ivekbot_orchestrator
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://ivek_user:ivek_pass@timescaledb:5432/weather_db
+      - REDIS_URL=redis://redis:6379/0
+      - OPEN_METEO_API=https://api.open-meteo.com/v1
+    volumes:
+      - .:/app
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+      mqtt_broker:
+        condition: service_started
+      redis:
+        condition: service_healthy
+
+  mqtt_broker:
+    image: eclipse-mosquitto:latest
+    container_name: ivekbot_mqtt
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_log:/mosquitto/log
+
+  timescaledb:
+    image: timescale/timescaledb:latest-pg15
+    container_name: ivekbot_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ivek_user
+      POSTGRES_PASSWORD: ivek_pass
+      POSTGRES_DB: weather_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ivek_user -d weather_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: ivekbot_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  db_data:
+  mosquitto_data:
+  mosquitto_log:

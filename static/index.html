@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IvekBot Weather Station — Xalapa Live Dashboard</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="top-nav">
+    <div class="brand-section">
+      <div class="brand-logo">⚡</div>
+      <div>
+        <div class="brand-title">IvekBot Weather Station</div>
+        <div class="brand-subtitle">Xalapa Centro, Veracruz ($19.54^\circ\text{N},\, 96.92^\circ\text{W}$) · 1,420 msnm</div>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <div class="live-indicator">
+        <div class="live-dot"></div>
+        <span id="live-status-text">EN VIVO (WS ACTIVO)</span>
+      </div>
+      <div class="alert-badge" id="alert-badge">ALERTA: VERDE</div>
+    </div>
+  </header>
+
+  <!-- Main Dashboard Container -->
+  <main class="dashboard-container">
+
+    <!-- 1. Real-Time Telemetry Cards Grid -->
+    <section class="grid-cards">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-label">Temperatura</span>
+          <span class="card-icon">🌡️</span>
+        </div>
+        <div class="card-value" id="val-temp">-- <span class="card-unit">°C</span></div>
+        <div class="card-footer">Anomalía 30y: <span id="val-anomaly">-- °C</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-label">Humedad Relativa</span>
+          <span class="card-icon">💧</span>
+        </div>
+        <div class="card-value" id="val-humidity">-- <span class="card-unit">%</span></div>
+        <div class="card-footer">Pto. Rocío: <span id="val-dewpoint">-- °C</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-label">Presión Barométrica</span>
+          <span class="card-icon">⏱️</span>
+        </div>
+        <div class="card-value" id="val-pressure">-- <span class="card-unit">hPa</span></div>
+        <div class="card-footer">Nivel LCL: <span id="val-lcl">-- hPa</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-label">Viento Superficie</span>
+          <span class="card-icon">💨</span>
+        </div>
+        <div class="card-value" id="val-wind">-- <span class="card-unit">km/h</span></div>
+        <div class="card-footer" id="val-wind-gust">Racha máx: -- km/h</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-label">Lluvia Acumulada (24h)</span>
+          <span class="card-icon">🌧️</span>
+        </div>
+        <div class="card-value" id="val-rain">-- <span class="card-unit">mm</span></div>
+        <div class="card-footer" id="val-rain-rate">Tasa: 0.0 mm/h</div>
+      </div>
+    </section>
+
+    <!-- 2. Charts & Physics Sections Grid -->
+    <section class="grid-main-sections">
+      <!-- Time Series Chart -->
+      <div class="chart-card">
+        <div class="chart-title-bar">
+          <div class="chart-title">Series de Tiempo en Vivo (24h)</div>
+        </div>
+        <div class="chart-container" id="timeSeriesChart"></div>
+      </div>
+
+      <!-- Atmospheric Physics Panel -->
+      <div class="chart-card physics-panel">
+        <div class="chart-title-bar">
+          <div class="chart-title">Termodinámica & Convección (MetPy)</div>
+        </div>
+        <div class="gauge-box" id="capeGaugeChart"></div>
+        <div class="physics-stat-grid">
+          <div class="stat-item">
+            <div class="stat-item-label">Agua Precipitable (PWAT)</div>
+            <div class="stat-item-val" id="val-pwat">-- mm</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item-label">Estado Frente Frío ("Norte")</div>
+            <div class="stat-item-val" id="val-norte">Normal</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Bottom Grid: 14-day Ensemble & AI Cognition / Graphify -->
+    <section class="grid-bottom-sections">
+      <!-- 14-Day Multi-Model Ensemble -->
+      <div class="chart-card">
+        <div class="chart-title-bar">
+          <div class="chart-title">Pronóstico Probabilístico 14 Días (Super-Ensemble ECMWF/GFS)</div>
+        </div>
+        <div class="chart-container" id="ensembleChart"></div>
+      </div>
+
+      <!-- Multi-Agent Cognitive Assistant & Graphify -->
+      <div class="ai-summary-card">
+        <div class="ai-badge">🤖 Orquestador Multi-Agente + Graphify (GraphRAG)</div>
+        <div class="summary-text" id="exec-summary">Cargando síntesis ejecutiva del orquestador...</div>
+        
+        <div class="chart-title" style="font-size: 0.85rem; margin-bottom: 8px; color: var(--text-secondary);">Boletín para Protección Civil / Redes</div>
+        <div class="bulletin-box" id="public-bulletin">Generando aviso meteorológico...</div>
+
+        <!-- Graphify Knowledge Search Box -->
+        <div class="graphify-box">
+          <div class="chart-title" style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 14px;">Consultar Grafo de Conocimiento (Graphify)</div>
+          <div class="search-input-group">
+            <input type="text" id="graph-query-input" class="search-input" placeholder="Ej: ¿Qué protocolo activa la alerta por Norte en Xalapa?" />
+            <button id="btn-graph-query" class="btn-search">Consultar</button>
+          </div>
+          <div id="graph-query-output" class="graph-results"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
