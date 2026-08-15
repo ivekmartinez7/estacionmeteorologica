@@ -1,4 +1,6 @@
 import os
+import time
+import hashlib
 import uuid
 import httpx
 from datetime import datetime, timedelta
@@ -8,6 +10,36 @@ try:
     load_dotenv()
 except ImportError:
     pass
+
+# ── Prompts cacheables (estáticos, largos, prefix-cache friendly) ──────────────
+# Para prompt caching (Anthropic/OpenRouter/OpenAI) el prefijo DEBE ser idéntico
+# entre llamadas. Todo lo estático va aquí (cache hit 90% ahorro); lo dinámico
+# va AL FINAL del user prompt (cache miss solo en el sufijo).
+SYSTEM_SUMMARY_STATIC = (
+    "Eres el meteorólogo jefe de la estación IvekBot Weather Station "
+    "(XAL-CENTRO-01, Xalapa, Veracruz — 19.5438°N, -96.9272°W, 1420 msnm, "
+    "bosque de niebla, alta orografía).\n"
+    "MISIÓN: generar un resumen ejecutivo meteorológico CONCISO (máximo 3 oraciones, "
+    "técnico, sin alucinaciones, en español neutro). "
+    "Usa SOLO los datos proporcionados; no inventes valores ni eventos.\n"
+    "REGLAS: 1) Si Norte activo → menciona rachas/descenso térmico. "
+    "2) Si CAPE>1500 o PWAT>40 → menciona inestabilidad/convectividad. "
+    "3) Si todo estable → indica estabilidad y valores actuales. "
+    "4) No uses emojis aquí (solo en boletín). 5) Sé breve: ahorra tokens."
+)
+
+SYSTEM_BULLETIN_STATIC = (
+    "Eres el redactor de Protección Civil de IvekBot Weather Station "
+    "(Xalapa y región Actopan-La Antigua-Sordo).\n"
+    "MISIÓN: redactar un aviso ciudadano BREVE con emojis, listo para "
+    "WhatsApp/Telegram/X, en español neutro, sin tecnicismos innecesarios.\n"
+    "FORMATO OBLIGATORIO:\n"
+    "🟢/🟡/🟠/🔴 AVISO [NIVEL] — Xalapa y Región\n"
+    "• Riesgo Dominante: <tipo>\n"
+    "• Datos: Temp/Hum/Viento/Lluvia\n"
+    "• Recomendación: 1-2 acciones concretas\n"
+    "REGLAS: usa SOLO datos dados; no exageres; si VERDE, tono tranquilo."
+)
 from app.schemas import (
     ForecastReport,
     TelemetryData,
@@ -50,23 +82,64 @@ class WeatherOrchestrator:
             self.risk_temperature = float(os.getenv("RISK_AGENT_TEMPERATURE", "0.3"))
         except ValueError:
             self.risk_temperature = 0.3
+        # ── Prompt cache + dedup (ahorro economía) ──────────────────────────
+        # LLM_CACHE_TTL=0 desactiva cache local; LLM_CACHE_TTL=60 (default) evita
+        # llamar 2× al LLM con telemetría idéntica en <60 s (ej. polling del dashboard).
+        try:
+            self._cache_ttl = int(os.getenv("LLM_CACHE_TTL", "60"))
+        except ValueError:
+            self._cache_ttl = 60
+        self._cache: Dict[str, tuple[float, str]] = {}  # key -> (expires_at, value)
+        self._enable_prompt_cache = os.getenv("LLM_ENABLE_PROMPT_CACHE", "1") not in ("0", "false", "False")
+        self._prompt_cache_log = os.getenv("LLM_PROMPT_CACHE_LOG", "0") in ("1", "true", "True")
 
     async def _call_llm(self, prompt: str, system_prompt: str, model_name: str, max_tokens: int = 1000, temperature: float = 0.3) -> Optional[str]:
-        """Realiza una llamada genérica a cualquier API compatible con OpenAI / Token Plan."""
+        """Llamada OpenAI-compatible con prompt caching (prefix-cache) + dedup local.
+
+        - Prompt caching: system estático al INICIO (cache hit 90% en Anthropic/OpenRouter),
+          datos dinámicos al FINAL del user prompt (solo sufijo no cacheable).
+          Se envía `cache_control` en el system cuando el proveedor lo soporta; si no,
+          es inocuo (el server lo ignora).
+        - Dedup local: si la misma telemetría ya se consultó hace <TTL, no se llama.
+        """
         if not self.llm_api_key or self.llm_api_key == "tu_api_key_aqui":
             return None
+
+        # ── Dedup local por hash (ahorra 100% del call) ──────────────────
+        dedup_key = ""
+        if self._cache_ttl > 0:
+            dedup_key = hashlib.sha256(f"{model_name}|{system_prompt[:80]}|{prompt}".encode()).hexdigest()[:16]
+            hit = self._cache.get(dedup_key)
+            if hit and hit[0] > time.time():
+                if self._prompt_cache_log:
+                    print(f"[LLM cache HIT local] {model_name} key={dedup_key}")
+                return hit[1]
+            # limpiar expirados cada ~20 calls
+            if len(self._cache) > 64:
+                now = time.time()
+                self._cache = {k: v for k, v in self._cache.items() if v[0] > now}
 
         url = f"{self.llm_base_url}/chat/completions"
         headers = {
             "Authorization": f"Bearer {self.llm_api_key}",
             "Content-Type": "application/json"
         }
+        # ── Mensajes con cache_control en el system (Anthropic/OpenRouter) ─
+        # El system es 100% estático (SYSTEM_*_STATIC) → cacheable.
+        # El user lleva solo el sufijo dinámico (telemetría) → no rompe el prefijo.
+        if self._enable_prompt_cache:
+            messages = [
+                {"role": "system", "content": [{"type": "text", "text": system_prompt, "cache_control": {"type": "ephemeral"}}]},
+                {"role": "user", "content": prompt},
+            ]
+        else:
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt},
+            ]
         payload = {
             "model": model_name,
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": prompt}
-            ],
+            "messages": messages,
             "max_tokens": max_tokens,
             "temperature": temperature
         }
@@ -76,7 +149,11 @@ class WeatherOrchestrator:
                 res = await client.post(url, headers=headers, json=payload)
                 if res.status_code == 200:
                     data = res.json()
-                    return data["choices"][0]["message"]["content"].strip()
+                    text = data["choices"][0]["message"]["content"].strip()
+                    # Guardar en dedup local
+                    if dedup_key:
+                        self._cache[dedup_key] = (time.time() + self._cache_ttl, text)
+                    return text
         except Exception as err:
             print(f"[LLM Gateway] Error consultando API de LLM ({model_name}): {err}")
 
@@ -131,16 +208,16 @@ class WeatherOrchestrator:
         )
 
     async def _synthesize_summary_with_llm(self, t: TelemetryData, th: ThermodynamicIndices, r: RiskAssessment) -> str:
-        prompt = (
-            f"Ubicación: {self.location}\n"
-            f"Telemetría: Temp={t.temperature_c}°C, Humedad={t.humidity_pct}%, Presión={t.pressure_hpa}hPa, Viento={t.wind_speed_kmh}km/h (Racha: {t.wind_gust_kmh}km/h), Lluvia 24h={t.rain_accum_24h_mm}mm.\n"
-            f"Termodinámica: CAPE={th.cape_jkg} J/kg, CIN={th.cin_jkg} J/kg, PWAT={th.pwat_mm}mm, Frente Frío Norte Activo: {th.norte_surge_detected}.\n"
-            f"Nivel Alerta: {r.alert_level}, Riesgo Dominante: {r.dominant_hazard}.\n"
-            "Genera un resumen meteorológico ejecutivo conciso (máximo 3 oraciones)."
+        # Sufijo dinámico (lo único que rompe el cache) — corto y al FINAL
+        dynamic = (
+            f"DATOS VIVOS — Xalapa Centro ({self.location})\n"
+            f"Temp={t.temperature_c}°C Hum={t.humidity_pct}% Pres={t.pressure_hpa}hPa "
+            f"Viento={t.wind_speed_kmh}km/h Racha={t.wind_gust_kmh}km/h Lluvia24h={t.rain_accum_24h_mm}mm\n"
+            f"CAPE={th.cape_jkg} CIN={th.cin_jkg} PWAT={th.pwat_mm} Norte={th.norte_surge_detected}\n"
+            f"Alerta={r.alert_level} Peligro={r.dominant_hazard}\n"
+            "Tarea: resumen ejecutivo 3 oraciones."
         )
-        sys_prompt = "Eres el meteorólogo jefe de la estación IvekBot. Genera resúmenes técnicos precisos basados estrictamente en los datos proporcionados."
-
-        llm_response = await self._call_llm(prompt, sys_prompt, self.orchestrator_model, max_tokens=self.orchestrator_max_tokens, temperature=self.orchestrator_temperature)
+        llm_response = await self._call_llm(dynamic, SYSTEM_SUMMARY_STATIC, self.orchestrator_model, max_tokens=self.orchestrator_max_tokens, temperature=self.orchestrator_temperature)
         if llm_response:
             return llm_response
 
@@ -161,14 +238,12 @@ class WeatherOrchestrator:
         )
 
     async def _synthesize_bulletin_with_llm(self, t: TelemetryData, th: ThermodynamicIndices, r: RiskAssessment) -> str:
-        prompt = (
-            f"Alerta: {r.alert_level}, Peligro: {r.dominant_hazard}, Temp: {t.temperature_c}°C, Lluvia 24h: {t.rain_accum_24h_mm}mm, Viento: {t.wind_speed_kmh}km/h.\n"
-            f"Acciones recomendadas: {', '.join(r.recommended_actions)}.\n"
-            "Redacta un aviso breve con emojis formateado para WhatsApp / Telegram / X para la población."
+        dynamic = (
+            f"Alerta={r.alert_level} Peligro={r.dominant_hazard} Temp={t.temperature_c}°C Lluvia24h={t.rain_accum_24h_mm}mm Viento={t.wind_speed_kmh}km/h\n"
+            f"Acciones: {', '.join(r.recommended_actions)}\n"
+            "Tarea: aviso breve con emojis WhatsApp/Telegram/X."
         )
-        sys_prompt = "Genera avisos meteorológicos de Protección Civil claros, directos y con emojis informativos."
-
-        llm_response = await self._call_llm(prompt, sys_prompt, self.risk_agent_model, max_tokens=self.risk_max_tokens, temperature=self.risk_temperature)
+        llm_response = await self._call_llm(dynamic, SYSTEM_BULLETIN_STATIC, self.risk_agent_model, max_tokens=self.risk_max_tokens, temperature=self.risk_temperature)
         if llm_response:
             return llm_response
 
