@@ -34,9 +34,9 @@ Demo FastAPI de estación meteorológica para Xalapa: física determinista, dash
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg?logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED.svg?logo=docker&logoColor=white)](https://docker.com)
-[![License: IvekBot](https://img.shields.io/badge/License-IvekBot_mamalona-8a2be2.svg)](LICENSE)
+[![License: PolyForm Noncommercial](https://img.shields.io/badge/License-PolyForm_Noncommercial_1.0.0-8a2be2.svg)](LICENSE)
 
-Licencia: **IvekBot — Atribución Obligatoria + Compensación Comercial** — ver [`LICENSE`](LICENSE). Si lo usas, menciona a **Ivek Martínez**; si lo usas para ganar dinero, se acuerda compensación (licencia §3). Este proyecto **no es Django** (la carpeta padre se llama `django/`; el runtime es FastAPI 3.5.0).
+Licencia: **PolyForm Noncommercial 1.0.0** + *Required Notice* de atribución + uso comercial con licencia de paga — ver [`LICENSE`](LICENSE) y nota final al pie. Si lo usas, menciona a **Ivek Martínez**; si es comercial, contacta para licencia de paga. Este proyecto **no es Django** (la carpeta padre se llama `django/`; el runtime es FastAPI 3.5.0).
 
 ## Qué hace hoy (AS-IS)
 
@@ -159,9 +159,13 @@ RISK_AGENT_MODEL=qwen2.5:7b
 | ¿Por qué esos umbrales en Xalapa? | [estacion_meteorologica.md](estacion_meteorologica.md) |
 | ¿Qué símbolos conecta el repo? | [graphify-out/GRAPH_REPORT.md](graphify-out/GRAPH_REPORT.md) (artefacto 2026-08-14; `THEME` aislado = constante JS en `static/js/dashboard.js:9`) |
 
+## Licencia
+
+**PolyForm Noncommercial 1.0.0** — texto en [`LICENSE`](LICENSE). Gratis para uso no comercial con atribución obligatoria (`Required Notice:`); uso comercial requiere licencia de paga aparte — contacta a https://github.com/ivekmartinez7.
+
 ## Checklist corto
 
 - [x] Front-matter con commit `1513c19`.
 - [x] Quick start: uvicorn + simulador + URL.
-- [x] Sin badge MIT. Sin “1 Hz” AS-IS. Sin SA1–SA6 como clases.
+- [x] Sin “1 Hz” AS-IS. Sin SA1–SA6 como clases.
 - [x] Infra Docker ≠ integración.

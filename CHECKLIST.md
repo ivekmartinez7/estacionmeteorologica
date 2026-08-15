@@ -51,7 +51,7 @@
 ### P0 — Bloquea cierre documental
 
 - [x] **P0.0 Cierre git** — `f9b0d4a` pusheado: `README 1.3.0` + `SDD 1.2.0` + `memoria 1.3.0` ancla `1513c19`.
-- [x] **P0.1 LICENSE mamalona** — `LICENSE` (IvekBot Atribución + Compensación Comercial, v1.0 2026-08-15) añadida: si lo usan te mencionan, si es comercial se mochan (§3). Badge y nota en README/SDD.
+- [x] **P0.1 LICENSE** — `LICENSE` PolyForm Noncommercial 1.0.0 + Required Notice (atribución Ivek Martínez) + comercial requiere licencia de paga aparte. Badge y nota en README/SDD.
 - [x] **P0.2 PDF histórico** — `estscionmeteorologica.pdf` queda como **HISTÓRICO** en la raíz (desfasado del md 1.3.0 recortado; no regenerar ahora). Ver nota en CHECKLIST §PDF.
 
 ### P1 — Deuda docs/código menor (1-2h, DeepSeek Flash basta)

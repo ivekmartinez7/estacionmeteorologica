@@ -1,94 +1,85 @@
-# Licencia IvekBot — Atribución Obligatoria + Compensación Comercial
-# IvekBot License — Attribution Required + Commercial Compensation
-# SPDX-License-Identifier: LicenseRef-IvekBot-NC-Compensation-1.0
-# Versión 1.0 — 2026-08-15
+PolyForm Noncommercial License 1.0.0
+https://polyformproject.org/licenses/noncommercial/1.0.0
 
-Copyright (c) 2026 Ivek Martínez (ivekmartinez7) — IvekBot Weather Station
+## Acceptance
 
-------------------------------------------------------------------------
-## Resumen en cristiano (no sustituye al texto legal)
+In order to get any license under these terms, you must agree to them as both strict obligations and conditions to all your licenses.
 
-- **Si lo usas, me mencionas.** En tu README, en tu dashboard y en tu demo.
-- **Si lo usas para ganar dinero, te mochas.** Uso comercial = licencia comercial aparte y compensación acordada.
-- Sin letra chiquita que te quite el crédito.
+## Copyright License
 
-------------------------------------------------------------------------
-## 1. Definiciones
+The licensor grants you a copyright license for the software to do everything you might do with the software that would otherwise infringe the licensor's copyright in it for any permitted purpose. However, you may only distribute the software according to [Distribution License](#distribution-license) and make changes or new works based on the software according to [Changes and New Works License](#changes-and-new-works-license).
 
-1.1 **"Obra"**: este repositorio y todo su contenido (código, docs, schemas, firmware, dashboard, DDL, configs).
-1.2 **"Uso No Comercial"**: uso personal, académico, investigación, evaluación interna sin ofrecer el servicio a terceros ni monetizarlo directa o indirectamente.
-1.3 **"Uso Comercial"**: cualquier uso que genere ingreso, ahorro significativo o ventaja competitiva para una entidad, incluyendo: SaaS, producto, servicio pagado, consultoría que lo revenda, despliegue en empresa/gobierno/ONG con fines operativos, o integración en un producto que se venda. Si dudas, es comercial.
-1.4 **"Atribución"**: crédito visible a "Ivek Martínez — IvekBot Weather Station (github.com/ivekmartinez7/estacionmeteorologica)" con enlace al repo original.
+## Distribution License
 
-------------------------------------------------------------------------
-## 2. Lo que SÍ puedes hacer GRATIS (Uso No Comercial)
+The licensor grants you an additional copyright license to distribute copies of the software. Your license to distribute covers distributing the software with changes and new works permitted by [Changes and New Works License](#changes-and-new-works-license).
 
-Se te concede, de forma gratuita, no exclusiva y no sublicenciable, el derecho a usar, copiar, modificar y distribuir la Obra **solo para Uso No Comercial**, siempre que:
+## Notices
 
-a) Mantengas este archivo LICENSE intacto en cualquier copia o fork;
-b) Des crédito **visible y no escondido**: en el README principal, en la pantalla "Acerca de" del dashboard y en cualquier publicación/demo que use la Obra;
-c) Indiques cambios relevantes si redistribuyes una versión modificada;
-d) No elimines avisos de copyright ni de atribución.
+You must ensure that anyone who gets a copy of any part of the software from you also gets a copy of these terms or the URL for them above, as well as copies of any plain-text lines beginning with `Required Notice:` that the licensor provided with the software. For example:
 
-El incumplimiento de (a)-(d) termina automáticamente esta licencia.
+> Required Notice: Copyright Yoyodyne, Inc. (http://example.com)
 
-------------------------------------------------------------------------
-## 3. Uso Comercial — te tienes que mochar
+Required Notice: Copyright (c) 2026 Ivek Martínez (ivekmartinez7) — IvekBot Weather Station (https://github.com/ivekmartinez7/estacionmeteorologica) — If you use this work, credit Ivek Martínez visibly (README, dashboard "About", demo/publication). Commercial use requires a separate paid license — contact the author via GitHub.
 
-3.1 El Uso Comercial **no está cubierto** por la sección 2. Para Uso Comercial necesitas una **Licencia Comercial** separada y por escrito.
-3.2 Para obtenerla, contacta al autor vía GitHub (github.com/ivekmartinez7) o al correo que figure en el perfil. Respuesta típica < 7 días.
-3.3 La compensación se acuerda caso por caso, con criterio de justicia y proporcionalidad. Modalidades válidas (a elegir de mutuo acuerdo):
-   - Pago único por despliegue/instalación;
-   - Patrocinio / Sponsorship recurrente (GitHub Sponsors u otro);
-   - Regalías (% sobre ingreso atribuible);
-   - Donación en especie acordada (hardware, datos, infraestructura, desarrollo);
-   - Contrato de soporte/mantenimiento.
-3.4 Sin Licencia Comercial firmada, el Uso Comercial está **prohibido**. No hay uso comercial "de a gratis".
-3.5 Lo recaudado financia mantenimiento, sensores y tiempo de desarrollo. Si tu proyecto es comunitario sin fines de lucro pero con patrocinios, hablamos y lo dejamos justo.
+## Changes and New Works License
 
-------------------------------------------------------------------------
-## 4. Atribución — cómo se ve bien
+The licensor grants you an additional copyright license to make changes and new works based on the software for any permitted purpose.
 
-Ejemplo mínimo en tu README:
+## Patent License
 
-> Basado en **IvekBot Weather Station** por **Ivek Martínez** — github.com/ivekmartinez7/estacionmeteorologica — Licencia IvekBot NC-Compensación 1.0
+The licensor grants you a patent license for the software that covers patent claims the licensor can license, or becomes able to license, that you would infringe by using the software.
 
-Y en el dashboard, footer o "Acerca de":
+## Noncommercial Purposes
 
-> Datos y física por IvekBot Weather Station (Ivek Martínez)
+Any noncommercial purpose is a permitted purpose.
 
-Si es un paper, tesis o post: cita el repo.
+## Personal Uses
 
-------------------------------------------------------------------------
-## 5. Restricciones
+Personal use for research, experiment, and testing for the benefit of public knowledge, personal study, private entertainment, hobby projects, amateur pursuits, or religious observance, without any anticipated commercial application, is use for a permitted purpose.
 
-- No puedes sublicenciar la Obra con otros términos que eliminen la atribución o la compensación comercial.
-- No puedes usar el nombre "IvekBot" o "Ivek Martínez" para endosar tu producto sin permiso.
-- No puedes quitar o esconder la atribución (letra chiquita transparente no vale).
+## Noncommercial Organizations
 
-------------------------------------------------------------------------
-## 6. Terminación
+Use by any charitable organization, educational institution, public research organization, public safety or health organization, environmental protection organization, or government institution is use for a permitted purpose regardless of the source of funding or obligations resulting from the funding.
 
-Si violas esta licencia y no corriges en 15 días tras ser notificado, tus derechos terminan. El uso posterior es infracción. Puedes recuperar la licencia si dejas el uso infractor y, en caso comercial, regularizas la compensación.
+## Fair Use
 
-------------------------------------------------------------------------
-## 7. Sin garantías
+You may have "fair use" rights for the software under the law. These terms do not limit them.
 
-La Obra se entrega "TAL CUAL", sin garantías de ningún tipo. El autor no será responsable por daños derivados del uso. Tú asumes el riesgo de desplegar sensores, estimaciones heurísticas y boletines en producción.
+## No Other Rights
 
-------------------------------------------------------------------------
-## 8. Compatibilidad y forks
+These terms do not allow you to sublicense or transfer any of your licenses to anyone else, or prevent the licensor from granting licenses to anyone else. These terms do not imply any other licenses.
 
-Si haces fork, mantén esta licencia. Si quieres relicenciar tu fork para uso comercial propio, necesitas Licencia Comercial. Las contribuciones (PRs) se asumen bajo esta misma licencia salvo acuerdo distinto por escrito.
+## Patent Defense
 
-------------------------------------------------------------------------
-## 9. Contacto comercial
+If you make any written claim that the software infringes or contributes to infringement of any patent, your patent license for the software granted under these terms ends immediately. If your company makes such a claim, your patent license ends immediately for work on behalf of your company.
 
-GitHub: https://github.com/ivekmartinez7
-Asunto sugerido: "[Licencia Comercial] IvekBot Weather Station — <tu empresa/proyecto>"
+## Violations
 
-Incluye: quién eres, cómo lo usarás, escala (usuarios/estaciones/ingresos estimados) y compensación propuesta. Te respondo con propuesta justa.
+The first time you are notified in writing that you have violated any of these terms, or done anything with the software not covered by your licenses, your licenses can nonetheless continue if you come into full compliance with these terms, and take practical steps to correct past violations, within 32 days of receiving notice. Otherwise, all your licenses end immediately.
 
-------------------------------------------------------------------------
+## No Liability
+
+***As far as the law allows, the software comes as is, without any warranty or condition, and the licensor will not be liable to you for any damages arising out of these terms or the use or nature of the software, under any kind of legal claim.***
+
+## Definitions
+
+The **licensor** is the individual or entity offering these terms, and the **software** is the software the licensor makes available under these terms.
+
+**You** refers to the individual or entity agreeing to these terms.
+
+**Your company** is any legal entity, sole proprietorship, or other kind of organization that you work for, plus all organizations that have control over, are under the control of, or are under common control with that organization. **Control** means ownership of substantially all the assets of an entity, or the power to direct its management and policies by vote, contract, or otherwise. Control can be direct or indirect.
+
+**Your licenses** are all the licenses granted to you for the software under these terms.
+
+**Use** means anything you do with the software requiring one of your licenses.
+
+---
+
+## Commercial Licensing — How to "mocharse"
+
+Noncommercial purposes are free (with attribution per the Required Notice above). Any commercial purpose — SaaS, paid product/service, resale, operational deployment that saves money or generates revenue — requires a separate commercial license in writing.
+
+Contact: https://github.com/ivekmartinez7 — subject "[Licencia Comercial] IvekBot Weather Station — <tu empresa/proyecto>".
+Typical compensation (by mutual agreement): one-time fee, sponsorship, royalty, in-kind contribution, or support contract. Without a signed commercial license, commercial use is not permitted.
+
 Hecho con cariño en Xalapa, Veracruz — bosque de niebla, 1,420 msnm.
-Si te sirvió, menciona. Si te dio dinero, comparte. Así seguimos mejorando la estación.
