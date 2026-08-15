@@ -34,8 +34,9 @@ Demo FastAPI de estación meteorológica para Xalapa: física determinista, dash
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg?logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED.svg?logo=docker&logoColor=white)](https://docker.com)
+[![License: IvekBot](https://img.shields.io/badge/License-IvekBot_mamalona-8a2be2.svg)](LICENSE)
 
-No hay archivo `LICENSE` en el repo. Este proyecto **no es Django** (la carpeta padre se llama `django/`; el runtime es FastAPI 3.5.0).
+Licencia: **IvekBot — Atribución Obligatoria + Compensación Comercial** — ver [`LICENSE`](LICENSE). Si lo usas, menciona a **Ivek Martínez**; si lo usas para ganar dinero, se acuerda compensación (licencia §3). Este proyecto **no es Django** (la carpeta padre se llama `django/`; el runtime es FastAPI 3.5.0).
 
 ## Qué hace hoy (AS-IS)
 
@@ -51,7 +52,6 @@ No hay archivo `LICENSE` en el repo. Este proyecto **no es Django** (la carpeta 
 - Persistencia: `docker-compose.yml` define TimescaleDB, Redis y Mosquitto; `app/` **no** escribe ni lee esos servicios. El estado vive en `current_telemetry` + `history_buffer`.
 - Clases de agente SA1–SA6, pysteps, LightGBM, GOES-16, Kalman, difusión real a WhatsApp/Telegram/X.
 - Stream a 1 Hz. Firmware ESP32 con BME280 real (el payload térmico de `firmware/esp32_sensor_node.py:73-81` es **fijo**).
-- Licencia MIT.
 
 Detalle de diseño y TO-BE: [SDD.md](SDD.md). Fórmulas regionales de Xalapa: [estacion_meteorologica.md](estacion_meteorologica.md). Grafo generado (no es spec): [graphify-out/GRAPH_REPORT.md](graphify-out/GRAPH_REPORT.md).
 

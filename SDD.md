@@ -40,6 +40,7 @@ Documento de diseño: *IvekBot Weather Station*.
 - **Commit ancla:** `1513c19`
 - **Estándar de referencia:** IEEE 1016-2009 (estructura parcial; faltan ADRs, seguridad, observabilidad y pruebas — ver §10)
 - **Ubicación de referencia:** Xalapa, Veracruz, México ($19.54^\circ\text{N},\, 96.92^\circ\text{W}$, $1{,}420\,\text{msnm}$)
+- **Licencia:** [`LICENSE`](../LICENSE) — IvekBot Atribución + Compensación Comercial (ver README).
 
 Este SDD **no** es el runbook. Para levantar la demo: [README.md](README.md). Fórmulas regionales: [estacion_meteorologica.md](estacion_meteorologica.md).
 
