@@ -49,3 +49,14 @@ CREATE TABLE IF NOT EXISTS weather_alerts (
     message_text TEXT NOT NULL,
     channels_sent VARCHAR(64)[]
 );
+
+-- 4. Vista continua 5 min — TO-BE (documentada en SDD §8 pero aún no activa)
+-- Descomentar cuando app/ consuma TimescaleDB. Hoy la app corre en memoria (ver SDD, README).
+-- CREATE MATERIALIZED VIEW IF NOT EXISTS telemetry_5min
+-- WITH (timescaledb.continuous) AS
+-- SELECT time_bucket('5 minutes', time) AS bucket, station_id,
+--        AVG(temperature_c) AS avg_temp, MAX(temperature_c) AS max_temp,
+--        MIN(temperature_c) AS min_temp, AVG(humidity_pct) AS avg_humidity,
+--        AVG(pressure_hpa) AS avg_pressure,
+--        SUM(rain_rate_mmh * (5.0/60.0)) AS accum_rain_mm, MAX(wind_speed_kmh) AS max_wind_gust
+-- FROM sensor_telemetry WHERE qc_valid = TRUE GROUP BY bucket, station_id;

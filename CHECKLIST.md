@@ -1,6 +1,7 @@
 # ✅ Checklist de Avance — IvekBot Weather Station
 
-> **Última actualización:** 2026-08-15 · **Commit ancla:** `1513c19` · **Rama:** `main`
+> **Última actualización:** 2026-08-15 · **Commit ancla:** `f9b0d4a` · **Rama:** `main` → `origin/main`
+> **PDF:** `estscionmeteorologica.pdf` es **HISTÓRICO** (dump previo al recorte 750→179 líneas de `estacion_meteorologica.md 1.3.0`). No regenerar hasta re-exportar la memoria. Sin impacto en demo.
 > **Auditoría base:** `AUDITORIA_GAPS_DOCUMENTACION.md` (2026-08-14, base `3d8829b`, histórico) · **Docs reescritos:** `README 1.3.0` + `SDD 1.2.0` + `memoria 1.3.0` (ancla `1513c19`)
 > **Para el próximo agente:** lee primero `README.md` + `SDD.md` + `estacion_meteorologica.md` (los 3 con front-matter `1513c19`), luego este checklist y la auditoría histórica.
 
@@ -47,17 +48,17 @@
 
 ## ⏳ Pendiente — Priorizado (TO-BE honesto)
 
-### P0 — Bloquea cierre documental (siguiente commit, <30 min, sin cambio de LLM)
+### P0 — Bloquea cierre documental
 
-- [ ] **P0.0 Cierre git** — commitear `README.md` + `SDD.md` + `estacion_meteorologica.md` + este `CHECKLIST.md` (ancla `1513c19`) y pushear `main`.
+- [x] **P0.0 Cierre git** — `f9b0d4a` pusheado: `README 1.3.0` + `SDD 1.2.0` + `memoria 1.3.0` ancla `1513c19`.
 - [ ] **P0.1 Decisión LICENSE** — añadir `LICENSE` real o dejar sin licencia (README ya sin badge; no inventar MIT).
-- [ ] **P0.2 PDF histórico** — `estscionmeteorologica.pdf` desfasado del md recortado: archivar en `docs/archivo/` o regenerar. No bloquear demo.
+- [x] **P0.2 PDF histórico** — `estscionmeteorologica.pdf` queda como **HISTÓRICO** en la raíz (desfasado del md 1.3.0 recortado; no regenerar ahora). Ver nota en CHECKLIST §PDF.
 
 ### P1 — Deuda docs/código menor (1-2h, DeepSeek Flash basta)
 
-- [ ] **P1.1 Persistencia honesta** — `requirements` trae `asyncpg/psycopg2/redis/paho-mqtt` pero `app/` no los importa. Opción A: cablear `sensor_telemetry` → TimescaleDB; Opción B: ya documentado como TO-BE (SDD §8) — mantener así hasta datos reales.
-- [ ] **P1.2 `requests` faltante** — `simulator/sensor_simulator.py` importa `requests` no listado en `requirements.txt`. Añadir como dependencia opcional o nota en README.
-- [ ] **P1.3 Sincronizar DDL** — `telemetry_5min` es TO-BE en SDD, no en `init.sql`; `forecast_verification_log`/`weather_alerts` en SQL sin escritor.
+- [x] **P1.1 Persistencia honesta** — ya documentado como TO-BE (README/SDD §8). SDD ya dice "vista continua no en SQL" + tabla Estado AS-IS vs TO-BE. Init.sql mantiene 3 tablas + CAGG TO-BE comentada.
+- [x] **P1.2 `requests` faltante** — añadido `requests>=2.31.0` a `requirements.txt` con comentario "solo para simulator".
+- [x] **P1.3 Sincronizar DDL** — `telemetry_5min` añadida como bloque comentado TO-BE en `database/init.sql` §4; `forecast_verification_log`/`weather_alerts` siguen en SQL sin escritor (SDD §8 ya lo declara).
 
 ### P2 — ML avanzado (reservar inteligencia superior, solo con datos)
 
