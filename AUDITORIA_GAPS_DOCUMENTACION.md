@@ -1,5 +1,7 @@
 # Auditoría de Gaps Documentales — IvekBot Weather Station
 
+> ⚠️ **HISTÓRICO — base `3d8829b`.** Fuente de verdad actual: `README.md 1.3.0` + `SDD.md 1.2.0` + `estacion_meteorologica.md 1.3.0` (ancla `1513c19`). Usar solo como trazabilidad de lo corregido; no implementar desde aquí sin contrastar con esos 3 MD.
+
 > Estado: ENTREGABLE DE INVESTIGACIÓN (research-lead). No modifica los MD existentes.
 > Fecha de consulta: 2026-08-14 · Último commit conocido: 3d8829b (provider-agnostic gateway).
 > Método: lectura directa de 20 archivos + verificación cruzada claim↔código (archivo:línea). Claim sin respaldo en código ni en MD = marcado **sin evidencia**. Confianza: ALTA (lectura directa), MEDIA (interpretación), BAJA (fuente externa).
