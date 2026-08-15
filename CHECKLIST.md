@@ -36,6 +36,7 @@
 - [x] Dashboard `static/` (5 tarjetas, gauge CAPE 0-3500, ECharts 24h, abanico sintético p50/p90).
 - [x] Firmware ESP32 (`firmware/esp32_sensor_node.py` 91L, MQTT QoS 1, batería/IRQ) + `simulator/sensor_simulator.py` 51L + `database/init.sql` 51L (3 tablas, hypertable).
 - [x] `graphify-out/` generado + `build_graph.py` 56L (`--budget 1500`).
+- [x] **Prompt caching + dedup LLM** (`ab24d0f`) — `SYSTEM_*_STATIC` cacheables con `cache_control: ephemeral` (Anthropic/OpenRouter 90% ahorro prefix; inocuo en OpenAI) + dedup local hash TTL 60s evita 2 calls idénticos en <60s → 100% ahorro en polling. Vars `LLM_ENABLE_PROMPT_CACHE/LLM_CACHE_TTL/LLM_PROMPT_CACHE_LOG` en `.env.example`.
 
 ---
 
@@ -78,7 +79,8 @@
 
 ## 📜 Historial de commits
 
-- `30f703e` (2026-08-14) — docs: corregir 4 MD post-auditoría AS-IS vs TO-BE + dotenv + compose (este checklist lo documenta)
+- `30f703e` (2026-08-14) — docs: corregir 4 MD post-auditoría AS-IS vs TO-BE + dotenv + compose
+- `ab24d0f` (2026-08-14) — feat(llm): prompt caching + dedup (SYSTEM_*_STATIC + cache_control + TTL 60s)
 - `3d8829b` — feat: gateway provider-agnostic (Grok)
 - `7cf0bf9` — docs: SDD.md v1.1.0
 - `11ba55e` — feat: initial commit (5,583 líneas incl. PDF + graph.json)
