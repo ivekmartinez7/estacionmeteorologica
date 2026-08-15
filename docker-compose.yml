@@ -7,12 +7,16 @@ services:
     restart: unless-stopped
     ports:
       - "8000:8000"
+    env_file:
+      - .env
     environment:
       - DATABASE_URL=postgresql://ivek_user:ivek_pass@timescaledb:5432/weather_db
       - REDIS_URL=redis://redis:6379/0
       - OPEN_METEO_API=https://api.open-meteo.com/v1
+      # LLM_* se inyectan desde .env vía env_file; sin .env caen a defaults del orquestador
     volumes:
-      - .:/app
+      - ./app:/app/app:ro
+      - ./static:/app/static:ro
     depends_on:
       timescaledb:
         condition: service_healthy
@@ -20,6 +24,12 @@ services:
         condition: service_started
       redis:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import httpx; print(httpx.get('http://localhost:8000/api/v1/dashboard/overview', timeout=5).status_code)\" | grep -q 200"]
+      interval: 15s
+      timeout: 8s
+      retries: 3
+      start_period: 20s
 
   mqtt_broker:
     image: eclipse-mosquitto:latest

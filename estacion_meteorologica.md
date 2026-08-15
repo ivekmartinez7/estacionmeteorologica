@@ -1,5 +1,10 @@
 # Arquitectura y Metodología Integral: Estación Meteorológica Digital Multi-Agente, Graphify (GraphRAG) & Dashboard en Tiempo Real
 
+> ⚠️ **ARCHIVO HISTÓRICO / DESFASADO — NO USAR PARA IMPLEMENTAR.**
+> Este documento es un **dump ~85% duplicado y desfasado** respecto al código real (ver `AUDITORIA_GAPS_DOCUMENTACION.md` §1.4).
+> Gaps críticos: schemas `extra=forbid` vs `ignore` real, `main.py` v3.1.0 hardcodeado vs v3.5.0 pipeline real, DDL sin `forecast_verification_log`/`weather_alerts`, compose sin `LLM_*`, firmware sin batería/IRQ. **Fuente de verdad: `SDD.md` v1.2.0 + código en `app/` + `README.md`.**
+> Se mantiene solo como archivo histórico de la spec regional (fórmulas Xalapa §2.1, comunidades Graphify §3).
+
 - **Proyecto:** Estación Meteorológica Digital con Agentes e Inteligencia Artificial (*IvekBot Weather Station*)
 - **Estándar:** Model Context Protocol (MCP), FastMCP, Graphify (GraphRAG), FastAPI, WebSockets, TimescaleDB, Docker, Apache ECharts / Leaflet
 - **Ubicación de Referencia:** Xalapa, Veracruz, México ($19.54^\circ\text{N},\, 96.92^\circ\text{W}$, Altitud: $1,420\,\text{msnm}$) — Microclima de Bosque de Niebla y Alta Orografía
@@ -229,24 +234,30 @@ flowchart TD
 
 ## 7. Endpoints API REST y Streaming WebSockets (`app/api/`)
 
+> ⚠️ **Desfasado:** la tabla mezcla endpoints reales con spec TO-BE. **Reales hoy:** `WS /ws/telemetry/live` (0.5 Hz, cada 2 s), `GET /api/v1/dashboard/overview`, `GET /api/v1/forecast/report`, `POST /api/v1/telemetry/ingest`, `POST /api/v1/knowledge/query`, `GET /`, `GET /static/*`. El resto es TO-BE.
+
 ```
 +-----------------------------------+--------------------+-------------------------------------------+
-| ENDPOINT                          | MÉTODO / PROTOCOLO | FUNCIÓN / RETORNO                         |
-+-----------------------------------+--------------------+-------------------------------------------+
-| /ws/telemetry/live                | WebSocket          | Stream en tiempo real de telemetría (1 Hz)|
-| /api/v1/dashboard/overview        | GET                | Estado consolidado actual de la estación  |
-| /api/v1/telemetry/history         | GET                | Series históricas agregadas (5m, 1h, 1d)  |
-| /api/v1/thermodynamics/sounding   | GET                | Perfil vertical y cálculo Skew-T MetPy    |
-| /api/v1/forecast/ensemble-bands   | GET                | Cuantiles p10-p50-p90 del Super-Ensamble  |
-| /api/v1/radar/frames              | GET                | GeoJSON / Imágenes PNG del Nowcasting     |
-| /api/v1/knowledge/query           | POST               | Consulta GraphRAG Graphify para LLMs      |
-| /api/v1/alerts/publish            | POST               | Emisión manual/automática a redes sociales|
-+-----------------------------------+--------------------+-------------------------------------------+
+| ENDPOINT                          | MÉTODO / PROTOCOLO | FUNCIÓN / RETORNO                         | ESTADO |
++-----------------------------------+--------------------+-------------------------------------------+--------+
+| /ws/telemetry/live                | WebSocket          | Stream en tiempo real de telemetría       | AS-IS (0.5 Hz, no 1 Hz)|
+| /api/v1/dashboard/overview        | GET                | Estado consolidado actual de la estación  | AS-IS  |
+| /api/v1/forecast/report           | GET                | Reporte + ensamble sintético 14d          | AS-IS  |
+| /api/v1/telemetry/ingest          | POST               | Ingesta + pipeline + broadcast            | AS-IS  |
+| /api/v1/knowledge/query           | POST               | Consulta GraphRAG Graphify para LLMs      | AS-IS  |
+| /api/v1/telemetry/history         | GET                | Series históricas agregadas (5m, 1h, 1d)  | TO-BE  |
+| /api/v1/thermodynamics/sounding   | GET                | Perfil vertical y cálculo Skew-T MetPy    | TO-BE  |
+| /api/v1/forecast/ensemble-bands   | GET                | Cuantiles p10-p50-p90 del Super-Ensamble  | TO-BE  |
+| /api/v1/radar/frames              | GET                | GeoJSON / Imágenes PNG del Nowcasting     | TO-BE  |
+| /api/v1/alerts/publish            | POST               | Emisión manual/automática a redes sociales| TO-BE  |
++-----------------------------------+--------------------+-------------------------------------------+--------+
 ```
 
 ---
 
 ## 8. Implementación Referencial del Backend, WebSockets y Graphify
+
+> ⚠️ **Desfasado:** el dump de código abajo es de `v3.1.0` hardcodeado, no del `v3.5.0` pipeline real en `app/main.py`. `extra=forbid` vs `extra=ignore` real en `schemas.py`. Ver código real en `app/`.
 
 ### 8.1. Esquemas de Datos Pydantic v2 (`schemas.py`)
 
@@ -308,7 +319,7 @@ class DashboardOverview(BaseModel):
     last_update: datetime = Field(default_factory=datetime.utcnow)
 ```
 
-### 8.2. Servidor FastAPI con WebSockets, FastMCP y Graphify (`main.py`)
+### 8.2. Servidor FastAPI con WebSockets, FastMCP y Graphify (`main.py`) — histórico v3.1.0, ver `app/main.py` v3.5.0 real
 
 ```python
 import asyncio

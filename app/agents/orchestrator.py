@@ -3,6 +3,11 @@ import uuid
 import httpx
 from datetime import datetime, timedelta
 from typing import Dict, Any, List, Optional
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 from app.schemas import (
     ForecastReport,
     TelemetryData,
@@ -28,8 +33,25 @@ class WeatherOrchestrator:
         self.llm_api_key = os.getenv("LLM_API_KEY", "")
         self.orchestrator_model = os.getenv("ORCHESTRATOR_MODEL", "gpt-4o-mini")
         self.risk_agent_model = os.getenv("RISK_AGENT_MODEL", self.orchestrator_model)
+        # Límites efectivos (antes hardcodeados; ahora leídos del .env)
+        try:
+            self.orchestrator_max_tokens = int(os.getenv("ORCHESTRATOR_MAX_TOKENS", "250"))
+        except ValueError:
+            self.orchestrator_max_tokens = 250
+        try:
+            self.risk_max_tokens = int(os.getenv("RISK_AGENT_MAX_TOKENS", "300"))
+        except ValueError:
+            self.risk_max_tokens = 300
+        try:
+            self.orchestrator_temperature = float(os.getenv("ORCHESTRATOR_TEMPERATURE", "0.3"))
+        except ValueError:
+            self.orchestrator_temperature = 0.3
+        try:
+            self.risk_temperature = float(os.getenv("RISK_AGENT_TEMPERATURE", "0.3"))
+        except ValueError:
+            self.risk_temperature = 0.3
 
-    async def _call_llm(self, prompt: str, system_prompt: str, model_name: str, max_tokens: int = 1000) -> Optional[str]:
+    async def _call_llm(self, prompt: str, system_prompt: str, model_name: str, max_tokens: int = 1000, temperature: float = 0.3) -> Optional[str]:
         """Realiza una llamada genérica a cualquier API compatible con OpenAI / Token Plan."""
         if not self.llm_api_key or self.llm_api_key == "tu_api_key_aqui":
             return None
@@ -46,7 +68,7 @@ class WeatherOrchestrator:
                 {"role": "user", "content": prompt}
             ],
             "max_tokens": max_tokens,
-            "temperature": 0.3
+            "temperature": temperature
         }
 
         try:
@@ -118,7 +140,7 @@ class WeatherOrchestrator:
         )
         sys_prompt = "Eres el meteorólogo jefe de la estación IvekBot. Genera resúmenes técnicos precisos basados estrictamente en los datos proporcionados."
 
-        llm_response = await self._call_llm(prompt, sys_prompt, self.orchestrator_model, max_tokens=250)
+        llm_response = await self._call_llm(prompt, sys_prompt, self.orchestrator_model, max_tokens=self.orchestrator_max_tokens, temperature=self.orchestrator_temperature)
         if llm_response:
             return llm_response
 
@@ -146,7 +168,7 @@ class WeatherOrchestrator:
         )
         sys_prompt = "Genera avisos meteorológicos de Protección Civil claros, directos y con emojis informativos."
 
-        llm_response = await self._call_llm(prompt, sys_prompt, self.risk_agent_model, max_tokens=300)
+        llm_response = await self._call_llm(prompt, sys_prompt, self.risk_agent_model, max_tokens=self.risk_max_tokens, temperature=self.risk_temperature)
         if llm_response:
             return llm_response
 
